@@ -16,12 +16,19 @@ app.get('/', (req: Request, res: Response) => {
 app.listen(port, () => {
 console.log(`⚡️[server]: Server is running at http://localhost:${port}`);
 });
-  
 
 app.get('/executeDuneQuery', async (req: Request, res: Response) => {
     const client = new DuneClient(process.env.DUNE_API_KEY ?? "");
     const queryID = 2684341; 
-    const parameters = [QueryParameter.text("Blockchain", "Ethereum")];
+    const chain_name = typeof req.query.chain_name === 'string' ? req.query.chain_name : undefined;
+
+    if (!chain_name) {
+        res.status(400).send('Missing or invalid chain_name parameter');
+        return;
+    }
+    
+    const parameters = [QueryParameter.text("Blockchain", chain_name)];
+
     try {
         const executionResult = await client.refresh(queryID, parameters);
         res.send(executionResult.result?.rows);
@@ -31,14 +38,3 @@ app.get('/executeDuneQuery', async (req: Request, res: Response) => {
         console.error(error.message);
     }
 });
-
-// const client = new DuneClient(process.env.DUNE_API_KEY ?? "");
-// const queryID = 2684341; 
-
-// const parameters = [
-//   QueryParameter.text("Blockchain", "Ethereum"), 
-// ];
-
-// client
-//   .refresh(queryID, parameters)
-//   .then((executionResult) => console.log(executionResult.result?.rows));
