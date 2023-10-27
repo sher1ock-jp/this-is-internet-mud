@@ -1,7 +1,8 @@
+import dotenv from 'dotenv';
+dotenv.config();
 import { QueryParameter, DuneClient } from "@cowprotocol/ts-dune-client";
-const { DUNE_API_KEY } = process.env;
 
-const client = new DuneClient("IghFJglpn2OivF1H7I8BBIsvWujhzIdZ" ?? "");
+const client = new DuneClient(process.env.DUNE_API_KEY ?? "");
 const queryID = 2684341; 
 
 const parameters = [

@@ -1,6 +1,8 @@
+var _a;
+import dotenv from 'dotenv';
+dotenv.config();
 import { QueryParameter, DuneClient } from "@cowprotocol/ts-dune-client";
-const { DUNE_API_KEY } = process.env;
-const client = new DuneClient("IghFJglpn2OivF1H7I8BBIsvWujhzIdZ" !== null && "IghFJglpn2OivF1H7I8BBIsvWujhzIdZ" !== void 0 ? "IghFJglpn2OivF1H7I8BBIsvWujhzIdZ" : "");
+const client = new DuneClient((_a = process.env.DUNE_API_KEY) !== null && _a !== void 0 ? _a : "");
 const queryID = 2684341;
 const parameters = [
     QueryParameter.text("Blockchain", "Ethereum"),
