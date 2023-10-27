@@ -16,7 +16,7 @@ const WalletConnect = () => {
   const { chains, publicClient } = configureChains(
     [optimism],
     [
-      alchemyProvider({ apiKey: "wYCEw98jUMkwZKQPWENufYd3ZCsPNFHT" }),
+      alchemyProvider({ apiKey: "process.env.ALCHEMYPROVIDER" }),
       publicProvider()
     ]
   );
