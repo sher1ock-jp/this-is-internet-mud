@@ -31,7 +31,12 @@ app.get('/executeDuneQuery', async (req: Request, res: Response) => {
 
     try {
         const executionResult = await client.refresh(queryID, parameters);
-        res.send(executionResult.result?.rows);
+        const firstRow = executionResult.result?.rows?.[0];
+        if (firstRow) {
+            res.send(firstRow);
+        } else {
+            res.status(404).send('No rows found');
+        }
     } catch (e) {
         // res.status(500).send(e.message);
         const error = e as Error;
