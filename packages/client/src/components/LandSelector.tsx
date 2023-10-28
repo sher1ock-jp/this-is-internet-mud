@@ -1,23 +1,22 @@
 import React, { useState } from 'react';
-
-const chains = [
-    { name: 'Ethereum (L1)', id: 1, description: '主要なスマートコントラクトプラットフォーム。' },
-    { name: 'Binance Smart Chain (L1)', id: 56, description: 'Binanceの提供するスマートコントラクト対応のブロックチェーン。' },
-];
+import {chains} from '../constants';
 
 const LandSelector = () => {
+    // hold the currently selected chain's ID
     const [selectedChain, setSelectedChain] = useState<string | null>(null);
+    // hold the list of lands associated with the selected chain
     const [lands, setLands] = useState<number[]>([]);
 
     const handleChainChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        // set the selected chain's ID based on user's choice
         setSelectedChain(event.target.value);
-        // こちらで土地一覧を取得するロジックを追加できます
-        // 今回の例では、選択されたチェーンのIDを基に土地一覧を配列として設定しています
-        setLands([1, 2, 3]);  // 仮の土地一覧
+        // a mock list of lands [1, 2, 3] is set
+        setLands([1, 2, 3]);  
     };
 
     const handleLandCreation = () => {
         const newLandId = lands.length + 1;
+         // update the lands state by adding the new land ID
         setLands(prevLands => [...prevLands, newLandId]);
     };
 
@@ -25,11 +24,13 @@ const LandSelector = () => {
         <div className="land-selector">
             <select onChange={handleChainChange}>
                 <option value="">-- choose chain --</option>
+                {/* Loop through the list of chains and render them as options in the dropdown. */}
                 {chains.map(chain => (
                     <option key={chain.id} value={chain.id}>{chain.name}</option>
                 ))}
             </select>
-
+            
+             {/* If a chain is selected, display the list of associated lands and provide an option to create a new land. */}
             {selectedChain && (
                 <>
                     <ul>
