@@ -20,6 +20,7 @@ export default mudConfig({
       },
       valueSchema: {
         pixelId: "uint8",
+        pixelCount: "uint8", // sort land order
       },
     },
 
