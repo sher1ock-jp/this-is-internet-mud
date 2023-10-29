@@ -8,6 +8,7 @@ export default mudConfig({
       },
       valueSchema: {
         // chainGasFee: "uint16",
+        chainID: "uint16",
         landCount: "uint8",
         chainName: "string",
         chainColor: "string",

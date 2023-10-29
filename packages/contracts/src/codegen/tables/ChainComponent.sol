@@ -26,10 +26,11 @@ ResourceId constant _tableId = ResourceId.wrap(
 ResourceId constant ChainComponentTableId = _tableId;
 
 FieldLayout constant _fieldLayout = FieldLayout.wrap(
-  0x0001010201000000000000000000000000000000000000000000000000000000
+  0x0003020202010000000000000000000000000000000000000000000000000000
 );
 
 struct ChainComponentData {
+  uint16 chainID;
   uint8 landCount;
   string chainName;
   string chainColor;
@@ -60,10 +61,11 @@ library ChainComponent {
    * @return _valueSchema The value schema for the table.
    */
   function getValueSchema() internal pure returns (Schema) {
-    SchemaType[] memory _valueSchema = new SchemaType[](3);
-    _valueSchema[0] = SchemaType.UINT8;
-    _valueSchema[1] = SchemaType.STRING;
+    SchemaType[] memory _valueSchema = new SchemaType[](4);
+    _valueSchema[0] = SchemaType.UINT16;
+    _valueSchema[1] = SchemaType.UINT8;
     _valueSchema[2] = SchemaType.STRING;
+    _valueSchema[3] = SchemaType.STRING;
 
     return SchemaLib.encode(_valueSchema);
   }
@@ -82,10 +84,11 @@ library ChainComponent {
    * @return fieldNames An array of strings with the names of value fields.
    */
   function getFieldNames() internal pure returns (string[] memory fieldNames) {
-    fieldNames = new string[](3);
-    fieldNames[0] = "landCount";
-    fieldNames[1] = "chainName";
-    fieldNames[2] = "chainColor";
+    fieldNames = new string[](4);
+    fieldNames[0] = "chainID";
+    fieldNames[1] = "landCount";
+    fieldNames[2] = "chainName";
+    fieldNames[3] = "chainColor";
   }
 
   /**
@@ -103,13 +106,55 @@ library ChainComponent {
   }
 
   /**
+   * @notice Get chainID.
+   */
+  function getChainID(uint16 chainId) internal view returns (uint16 chainID) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(chainId));
+
+    bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 0, _fieldLayout);
+    return (uint16(bytes2(_blob)));
+  }
+
+  /**
+   * @notice Get chainID.
+   */
+  function _getChainID(uint16 chainId) internal view returns (uint16 chainID) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(chainId));
+
+    bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 0, _fieldLayout);
+    return (uint16(bytes2(_blob)));
+  }
+
+  /**
+   * @notice Set chainID.
+   */
+  function setChainID(uint16 chainId, uint16 chainID) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(chainId));
+
+    StoreSwitch.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked((chainID)), _fieldLayout);
+  }
+
+  /**
+   * @notice Set chainID.
+   */
+  function _setChainID(uint16 chainId, uint16 chainID) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = bytes32(uint256(chainId));
+
+    StoreCore.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked((chainID)), _fieldLayout);
+  }
+
+  /**
    * @notice Get landCount.
    */
   function getLandCount(uint16 chainId) internal view returns (uint8 landCount) {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(chainId));
 
-    bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 0, _fieldLayout);
+    bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 1, _fieldLayout);
     return (uint8(bytes1(_blob)));
   }
 
@@ -120,7 +165,7 @@ library ChainComponent {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(chainId));
 
-    bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 0, _fieldLayout);
+    bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 1, _fieldLayout);
     return (uint8(bytes1(_blob)));
   }
 
@@ -131,7 +176,7 @@ library ChainComponent {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(chainId));
 
-    StoreSwitch.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked((landCount)), _fieldLayout);
+    StoreSwitch.setStaticField(_tableId, _keyTuple, 1, abi.encodePacked((landCount)), _fieldLayout);
   }
 
   /**
@@ -141,7 +186,7 @@ library ChainComponent {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = bytes32(uint256(chainId));
 
-    StoreCore.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked((landCount)), _fieldLayout);
+    StoreCore.setStaticField(_tableId, _keyTuple, 1, abi.encodePacked((landCount)), _fieldLayout);
   }
 
   /**
@@ -501,8 +546,14 @@ library ChainComponent {
   /**
    * @notice Set the full data using individual values.
    */
-  function set(uint16 chainId, uint8 landCount, string memory chainName, string memory chainColor) internal {
-    bytes memory _staticData = encodeStatic(landCount);
+  function set(
+    uint16 chainId,
+    uint16 chainID,
+    uint8 landCount,
+    string memory chainName,
+    string memory chainColor
+  ) internal {
+    bytes memory _staticData = encodeStatic(chainID, landCount);
 
     PackedCounter _encodedLengths = encodeLengths(chainName, chainColor);
     bytes memory _dynamicData = encodeDynamic(chainName, chainColor);
@@ -516,8 +567,14 @@ library ChainComponent {
   /**
    * @notice Set the full data using individual values.
    */
-  function _set(uint16 chainId, uint8 landCount, string memory chainName, string memory chainColor) internal {
-    bytes memory _staticData = encodeStatic(landCount);
+  function _set(
+    uint16 chainId,
+    uint16 chainID,
+    uint8 landCount,
+    string memory chainName,
+    string memory chainColor
+  ) internal {
+    bytes memory _staticData = encodeStatic(chainID, landCount);
 
     PackedCounter _encodedLengths = encodeLengths(chainName, chainColor);
     bytes memory _dynamicData = encodeDynamic(chainName, chainColor);
@@ -532,7 +589,7 @@ library ChainComponent {
    * @notice Set the full data using the data struct.
    */
   function set(uint16 chainId, ChainComponentData memory _table) internal {
-    bytes memory _staticData = encodeStatic(_table.landCount);
+    bytes memory _staticData = encodeStatic(_table.chainID, _table.landCount);
 
     PackedCounter _encodedLengths = encodeLengths(_table.chainName, _table.chainColor);
     bytes memory _dynamicData = encodeDynamic(_table.chainName, _table.chainColor);
@@ -547,7 +604,7 @@ library ChainComponent {
    * @notice Set the full data using the data struct.
    */
   function _set(uint16 chainId, ChainComponentData memory _table) internal {
-    bytes memory _staticData = encodeStatic(_table.landCount);
+    bytes memory _staticData = encodeStatic(_table.chainID, _table.landCount);
 
     PackedCounter _encodedLengths = encodeLengths(_table.chainName, _table.chainColor);
     bytes memory _dynamicData = encodeDynamic(_table.chainName, _table.chainColor);
@@ -561,8 +618,10 @@ library ChainComponent {
   /**
    * @notice Decode the tightly packed blob of static data using this table's field layout.
    */
-  function decodeStatic(bytes memory _blob) internal pure returns (uint8 landCount) {
-    landCount = (uint8(Bytes.slice1(_blob, 0)));
+  function decodeStatic(bytes memory _blob) internal pure returns (uint16 chainID, uint8 landCount) {
+    chainID = (uint16(Bytes.slice2(_blob, 0)));
+
+    landCount = (uint8(Bytes.slice1(_blob, 2)));
   }
 
   /**
@@ -597,7 +656,7 @@ library ChainComponent {
     PackedCounter _encodedLengths,
     bytes memory _dynamicData
   ) internal pure returns (ChainComponentData memory _table) {
-    (_table.landCount) = decodeStatic(_staticData);
+    (_table.chainID, _table.landCount) = decodeStatic(_staticData);
 
     (_table.chainName, _table.chainColor) = decodeDynamic(_encodedLengths, _dynamicData);
   }
@@ -626,8 +685,8 @@ library ChainComponent {
    * @notice Tightly pack static (fixed length) data using this table's schema.
    * @return The static data, encoded into a sequence of bytes.
    */
-  function encodeStatic(uint8 landCount) internal pure returns (bytes memory) {
-    return abi.encodePacked(landCount);
+  function encodeStatic(uint16 chainID, uint8 landCount) internal pure returns (bytes memory) {
+    return abi.encodePacked(chainID, landCount);
   }
 
   /**
@@ -659,11 +718,12 @@ library ChainComponent {
    * @return The dyanmic (variable length) data, encoded into a sequence of bytes.
    */
   function encode(
+    uint16 chainID,
     uint8 landCount,
     string memory chainName,
     string memory chainColor
   ) internal pure returns (bytes memory, PackedCounter, bytes memory) {
-    bytes memory _staticData = encodeStatic(landCount);
+    bytes memory _staticData = encodeStatic(chainID, landCount);
 
     PackedCounter _encodedLengths = encodeLengths(chainName, chainColor);
     bytes memory _dynamicData = encodeDynamic(chainName, chainColor);

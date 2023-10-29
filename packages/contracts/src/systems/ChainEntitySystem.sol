@@ -19,6 +19,7 @@ contract ChainEntitySystem is System {
         uint8 initial_land_count = 1;
         ChainComponent.set(
             chain_id,
+            chain_id,
             initial_land_count,
             chain_name,
             chain_color
