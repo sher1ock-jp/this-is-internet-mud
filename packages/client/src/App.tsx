@@ -15,11 +15,8 @@ const initializeTileColors = () => {
 const App = () => {
   const [chainId, setChainId] = useState<string>('');
   const [landId, setLandId] = useState<number>(1);
-
-  // pallette color for drawing
-  const [currentColor, setCurrentColor] = useState<string>('brown');
-  // tile(drawed) color
-  const [tileColors, setTileColors] = useState<string[][]>(initializeTileColors());
+  const [currentColor, setCurrentColor] = useState<string>('brown'); // pallette color for drawing
+  const [tileColors, setTileColors] = useState<string[][]>(initializeTileColors()); // tile(drawed) color
   const [pixelInfo, setPixelInfo] = useState<PixelInfo | null>(null);
 
   const idToXy = (id: number) => {
@@ -31,16 +28,25 @@ const App = () => {
   // It updates the color of the clicked tile to the current selected color
   const handleTileClick = (id: number) => {
     const { x, y } = idToXy(id);  // Convert the ID back to x, y coordinates
-
     const newTileColors = tileColors.map(row => [...row]);
     newTileColors[y][x] = currentColor;
     setTileColors(newTileColors);
   };
 
   const handlePixelInfoSubmit = (data: PixelInfo) => {
-    // write logic to register pixel info to server or blockchain here
-    setPixelInfo(data);
+    setPixelInfo(data); // write logic to register pixel info to server or blockchain here
   };
+
+  const renderColorPalette = () => {
+    return PRESETCOLORS.map((color) => (
+      <div 
+        key={color}
+        className={`color-swatch ${currentColor === color ? 'selected' : ''}`}
+        style={{ backgroundColor: color }}
+        onClick={() => setCurrentColor(color)}
+      />
+    ));
+  }
 
   return (
     <>
@@ -48,14 +54,7 @@ const App = () => {
         <div className="app-container">
             <Canvas tileColors={tileColors} onTileClick={handleTileClick} />
           <div className="palette-area">
-            {PRESETCOLORS.map((color) => (
-              <div 
-                key={color}
-                className={`color-swatch ${currentColor === color ? 'selected' : ''}`}
-                style={{ backgroundColor: color }}
-                onClick={() => setCurrentColor(color)}
-              />
-            ))}
+            {renderColorPalette()}
           </div>
           <div className="utility-area">
             <WalletConnect />

@@ -16,18 +16,15 @@ interface CanvasProps {
 
 const Canvas = ({ tileColors, onTileClick }: CanvasProps) => {
     const context = React.useContext(ChainLandContext);
-    if (!context) {
-    throw new Error('LandSelector must be used within a ChainLandContext.Provider');
-    }
+    if (!context) { throw new Error('LandSelector must be used within a ChainLandContext.Provider');}
     const { chainId, landId } = context;
     
     const { components: { Pixel },} = useMUD();
+    const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
     // const _chaindId = parseInt(chainId, 16);
     // console.log(_chaindId, landId);
     console.log("query result",runQuery([HasValue(Pixel, { chainID: Number(chainId), landID: landId })]));
-
-    const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
     const drawTile = (ctx: CanvasRenderingContext2D, x: number, y: number, color: string) => {
         ctx.fillStyle = color;
@@ -47,23 +44,16 @@ const Canvas = ({ tileColors, onTileClick }: CanvasProps) => {
         }
     }, [tileColors]); 
 
-    const xyToId = (x: number, y: number) => {
-        return y * MAP_SIZE + x;
-    }
+    const xyToId = (x: number, y: number) => y * MAP_SIZE + x;
 
     const handleCanvasClick = (e: React.MouseEvent<HTMLCanvasElement>) => {
-        const rect = canvasRef.current?.getBoundingClientRect(); // get canvas position
+        const rect = canvasRef.current?.getBoundingClientRect();
         if (rect) {
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
-            const tileX = Math.floor(x / TILE_SIZE);
-            const tileY = Math.floor(y / TILE_SIZE);
-            
-            const pixelId = xyToId(tileX, tileY);
+            const x = Math.floor((e.clientX - rect.left) / TILE_SIZE);
+            const y = Math.floor((e.clientY - rect.top) / TILE_SIZE);
 
-            // check if clicked position is within the map boundaries
-            if (tileX >= 0 && tileX < MAP_SIZE && tileY >= 0 && tileY < MAP_SIZE) {
-                onTileClick(pixelId);
+            if (x >= 0 && x < MAP_SIZE && y >= 0 && y < MAP_SIZE) {
+                onTileClick(xyToId(x, y));
             }
         }
     };

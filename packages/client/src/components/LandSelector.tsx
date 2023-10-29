@@ -16,43 +16,36 @@ const LandSelector = () => {
         throw new Error('LandSelector must be used within a ChainLandContext.Provider');
     }
 
-    const { setChainId, setLandId } = context;
-
     const { components: { ChainComponent },} = useMUD();
 
-    const [all_chain_component_data, setAllChainComponentData] = useState<any[]>([]);
+    const { setChainId, setLandId } = context;
+
+    const [allChainData, setAllChainData] = useState<any[]>([]);
+    const [selectedChain, setSelectedChain] = useState<string | null>(null); // hold the currently selected chain's ID
+    const [lands, setLands] = useState<number[]>([]); // hold the list of lands associated with the selected chain
 
     useEffect(() => {
         const fetchChainData = async () => {
-            const filtered_entities = Array.from(await runQuery([Has(ChainComponent)]));
-            const fetchedData: any = [];
+            const entities = await runQuery([Has(ChainComponent)]);
+            const fetchedData = Array.from(entities)
+                .map(entity => getComponentValue(ChainComponent, entity))
+                .filter(Boolean);
 
-            filtered_entities.forEach((entity) => {
-                const chain_component_value = getComponentValue(ChainComponent, entity);
-                if (chain_component_value) {
-                    fetchedData.push(chain_component_value);
-                }
-            });
-
-            setAllChainComponentData(fetchedData);
+            setAllChainData(fetchedData);
         };
 
         fetchChainData();
-    }, []); // この空の依存配列により、このuseEffectはコンポーネントがマウントされたときに一度だけ実行されます
-    console.log("all_chain_component_data",all_chain_component_data)
-
-    // hold the currently selected chain's ID
-    const [selectedChain, setSelectedChain] = useState<string | null>(null);
-    // hold the list of lands associated with the selected chain
-    const [lands, setLands] = useState<number[]>([]);
+    }, []);
 
     const handleChainChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         const selectedChainName = event.target.value;
-        const chainData = all_chain_component_data.find((chain: any) => chain.chainName === selectedChainName);
+        const chainData = allChainData.find(chain => chain.chainName === selectedChainName);
 
-        setSelectedChain(chainData.chainName);
-        setLands(Array.from({ length: chainData.landCount }).map((_, idx) => idx + 1));
-        setChainId(chainData.chainID);
+        if (chainData) {
+            setSelectedChain(chainData.chainName);
+            setLands(Array.from({ length: chainData.landCount }).map((_, idx) => idx + 1));
+            setChainId(chainData.chainID);
+        }
     };
 
     const handleLandCreation = () => {
@@ -65,7 +58,7 @@ const LandSelector = () => {
         <div className="land-selector">
             <select onChange={handleChainChange}>
                 <option value="">-- choose chain --</option>
-                {all_chain_component_data.map((chain: any) => (
+                {allChainData.map(chain => (
                     <option key={chain.chainName} value={chain.chainName}>{chain.chainName}</option>
                 ))}
             </select>
