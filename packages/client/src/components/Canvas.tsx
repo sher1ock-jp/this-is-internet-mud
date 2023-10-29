@@ -1,12 +1,30 @@
 import React, { useEffect, useRef, memo } from 'react';
-import { MAP_SIZE, TILE_SIZE, chains } from '../constants';
+import { MAP_SIZE, TILE_SIZE } from '../constants';
+import ChainLandContext from '../ChainLandContext';
+import { useMUD } from "../MUDContext";
+import { 
+  HasValue,
+  runQuery,
+  getComponentValue,
+  Has,
+} from "@latticexyz/recs";
 
 interface CanvasProps {
     tileColors: string[][];
-    onTileClick: (x: number, y: number) => void;
+    onTileClick: (id: number) => void;  // callback when a specific tile is clicked
 }
 
 const Canvas = ({ tileColors, onTileClick }: CanvasProps) => {
+    const context = React.useContext(ChainLandContext);
+    if (!context) {
+    throw new Error('LandSelector must be used within a ChainLandContext.Provider');
+    }
+    const { chainId, landId } = context;
+    
+    const { components: { Pixel },} = useMUD();
+    // console.log("クエリ結aaa果",runQuery([HasValue(Pixel,{pixelId:1})]));
+    // HasValue(SquareCoordinates, { x: coordinateX, y: coordinateY }
+
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
     const drawTile = (ctx: CanvasRenderingContext2D, x: number, y: number, color: string) => {
@@ -15,60 +33,6 @@ const Canvas = ({ tileColors, onTileClick }: CanvasProps) => {
         ctx.strokeStyle = 'lightgray';  // Outline color
         ctx.strokeRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
     };
-
-    // const drawInitialTile = (ctx: CanvasRenderingContext2D, x: number, y: number) => {
-    //     const baseColor = "#2C3E50"; 
-    //     ctx.fillStyle = baseColor;
-    //     ctx.fillRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
-
-    //     if (Math.random() > 0.8) {
-    //         ctx.strokeStyle = "#34495E";
-    //         ctx.beginPath();
-    //         if (Math.random() > 0.5) {
-    //             ctx.arc(x * TILE_SIZE + Math.random() * TILE_SIZE, y * TILE_SIZE + Math.random() * TILE_SIZE, 1, 0, 2 * Math.PI);
-    //         } else {
-    //             const startX = x * TILE_SIZE + Math.random() * TILE_SIZE;
-    //             const startY = y * TILE_SIZE + Math.random() * TILE_SIZE;
-    //             const endX = x * TILE_SIZE + Math.random() * TILE_SIZE;
-    //             const endY = y * TILE_SIZE + Math.random() * TILE_SIZE;
-    //             ctx.moveTo(startX, startY);
-    //             ctx.lineTo(endX, endY);
-    //         }
-    //         ctx.stroke();   
-    //     }
-    //     ctx.strokeStyle = 'lightgray';
-    //     ctx.strokeRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
-    // };
-
-    // const drawBackground = (ctx: CanvasRenderingContext2D) => {
-    //     ctx.fillStyle = 'black';
-    //     ctx.fillRect(0, 0, MAP_SIZE * TILE_SIZE, MAP_SIZE * TILE_SIZE);
-    //     for (let i = 0; i < 500; i++) {
-    //         const x = Math.random() * MAP_SIZE * TILE_SIZE;
-    //         const y = Math.random() * MAP_SIZE * TILE_SIZE;
-    //         ctx.fillStyle = 'white';
-    //         ctx.fillRect(x, y, 1, 1);
-    //     }
-    // };
-
-    // useEffect(() => {
-    //     const ctx = canvasRef.current?.getContext('2d');
-    //     if (ctx) {
-    //         if (!ctx.canvas.style.background) {
-    //             drawBackground(ctx);
-    //             ctx.canvas.style.background = ctx.canvas.toDataURL();
-    //         }
-    //         for (let x = 0; x < MAP_SIZE; x++) {
-    //             for (let y = 0; y < MAP_SIZE; y++) {
-    //                 if (tileColors[y][x] === 'white') {
-    //                     drawInitialTile(ctx, x, y);
-    //                 } else {
-    //                     drawTile(ctx, x, y, tileColors[y][x]);
-    //                 }
-    //             }
-    //         }   
-    //     }
-    // }, [tileColors]);
 
     useEffect(() => {
         const ctx = canvasRef.current?.getContext('2d');
@@ -79,18 +43,25 @@ const Canvas = ({ tileColors, onTileClick }: CanvasProps) => {
                 }
             }   
         }
-    }, [tileColors]);
+    }, [tileColors]); 
+
+    const xyToId = (x: number, y: number) => {
+        return y * MAP_SIZE + x;
+    }
 
     const handleCanvasClick = (e: React.MouseEvent<HTMLCanvasElement>) => {
-        const rect = canvasRef.current?.getBoundingClientRect();
+        const rect = canvasRef.current?.getBoundingClientRect(); // get canvas position
         if (rect) {
             const x = e.clientX - rect.left;
             const y = e.clientY - rect.top;
             const tileX = Math.floor(x / TILE_SIZE);
             const tileY = Math.floor(y / TILE_SIZE);
-        
+            
+            const pixelId = xyToId(tileX, tileY);
+
+            // check if clicked position is within the map boundaries
             if (tileX >= 0 && tileX < MAP_SIZE && tileY >= 0 && tileY < MAP_SIZE) {
-                onTileClick(tileX, tileY);
+                onTileClick(pixelId);
             }
         }
     };
@@ -108,4 +79,4 @@ const Canvas = ({ tileColors, onTileClick }: CanvasProps) => {
     );
 }
 
-export default memo(Canvas);
+export default memo(Canvas); // using memo to prevent unnecessary re-renders
