@@ -42,7 +42,7 @@ contract LandEntitySystem is System {
 
     // for create new pixel or change pixel element
     function emitReserveLandEntity(
-        bytes32 chain_id,
+        uint16 chain_id,
         uint8 land_id,
         uint8 pixel_id
     ) public {
@@ -54,7 +54,7 @@ contract LandEntitySystem is System {
     }
 
     function emitReleaseLandEntity(
-        bytes32 chain_id,
+        uint16 chain_id,
         uint8 land_id
     ) public {
         OffchainLand.deleteRecord(

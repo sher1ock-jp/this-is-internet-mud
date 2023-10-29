@@ -4,7 +4,7 @@ export default mudConfig({
   tables: {
     ChainComponent: { // chain is a reserved word
       keySchema: {
-        chainId: "bytes32",
+        chainId: "uint16",
       },
       valueSchema: {
         // chainGasFee: "uint16",
@@ -16,7 +16,7 @@ export default mudConfig({
 
     // Land: {
     //   keySchema: {
-    //     chaindId: "bytes32",
+    //     chaindId: "uint16",
     //     landId: "uint8",
     //   },
     //   valueSchema: {
@@ -26,7 +26,7 @@ export default mudConfig({
 
     OffchainLand: {
       keySchema: {
-        chaindId: "bytes32",
+        chainId: "uint16",
         landId: "uint8",
       },
       valueSchema: {
@@ -38,7 +38,7 @@ export default mudConfig({
 
     Pixel: {
       keySchema: {
-        chaindId: "bytes32",
+        chainId: "uint16",
         landId: "uint8",
         pixelId: "uint8",// fetch as many squares as exist in front end and return only those that exist.
       },
@@ -47,6 +47,8 @@ export default mudConfig({
         contractAddress: "address",
         connectedLandId: "uint8",
         connectedPixelId: "uint8",
+        chainID: "uint16",
+        landID: "uint8",
       },
     },
 

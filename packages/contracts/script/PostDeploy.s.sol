@@ -19,60 +19,60 @@ contract PostDeploy is Script {
     IWorld world = IWorld(worldAddress);
 
     world.createChainEntity(
-      "0x1",
+      1,
       "Ethereum",
       "#121212"
     );
 
     world.createChainEntity(
-      "0xa",
+      10,
       "OP+mainnet",
       "#FC0721"
     );
 
      world.createChainEntity(
-      "0x2105",
+      8453,
       "Base",
       "#799CF5"
     );
 
     world.createChainEntity(
-      "0x38",
+      56,
       "BNB",
       "#F0B90B"
     );
 
      world.createChainEntity(
-      "0x89",
+      137,
       "Polygon+PoS",
       "#8C44ED"
     );
 
      world.createChainEntity(
-      "0xa86a",
+      43114,
       "Avalanche+C-chain",
       "#E84440"
     );
     
      world.createChainEntity(
-      "0xa4ec",
+      42220,
       "Celo",
       "#809863"
     );
 
      world.createChainEntity(
-      "0x64",
+      100,
       "Gnosis",
       "#11765B"
     );
 
      world.createChainEntity(
-      "0xa4b1",
+      42129,
       "Arbitrum+One",
       "#2050DE"
     );
 
-    bytes32 chainId = StringToBytesKey("0x1");
+    uint16 chainId = 1;
 
     uint8[] memory pixel_ids = new uint8[](3);
     pixel_ids[0] = 1;

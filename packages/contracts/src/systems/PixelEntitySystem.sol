@@ -10,7 +10,7 @@ import {StringToBytesKey} from "./library/StringToBytesKey.sol";
 
 contract PixelEntitySystem is System {
     function createPixelEntity(
-        bytes32 chain_id,
+        uint16 chain_id,
         uint8 land_id,
         uint8[] memory pixel_id,
         uint8[] memory pixel_color,
@@ -26,14 +26,16 @@ contract PixelEntitySystem is System {
                 pixel_color[i],
                 contract_address[i],
                 connected_land_id[i],
-                connected_pixel_id[i]
+                connected_pixel_id[i],
+                chain_id,
+                land_id
             );
         }
     }
 
     // user cant change only pixel address
     function changePixelColor(
-        bytes32 chain_id,
+        uint16 chain_id,
         uint8 land_id,
         uint8 pixel_id,
         uint8 pixel_color

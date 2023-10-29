@@ -44,7 +44,7 @@ library OffchainLand {
    */
   function getKeySchema() internal pure returns (Schema) {
     SchemaType[] memory _keySchema = new SchemaType[](2);
-    _keySchema[0] = SchemaType.BYTES32;
+    _keySchema[0] = SchemaType.UINT16;
     _keySchema[1] = SchemaType.UINT8;
 
     return SchemaLib.encode(_keySchema);
@@ -67,7 +67,7 @@ library OffchainLand {
    */
   function getKeyNames() internal pure returns (string[] memory keyNames) {
     keyNames = new string[](2);
-    keyNames[0] = "chaindId";
+    keyNames[0] = "chainId";
     keyNames[1] = "landId";
   }
 
@@ -97,9 +97,9 @@ library OffchainLand {
   /**
    * @notice Set pixelId.
    */
-  function setPixelId(bytes32 chaindId, uint8 landId, uint8 pixelId) internal {
+  function setPixelId(uint16 chainId, uint8 landId, uint8 pixelId) internal {
     bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = chaindId;
+    _keyTuple[0] = bytes32(uint256(chainId));
     _keyTuple[1] = bytes32(uint256(landId));
 
     StoreSwitch.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked((pixelId)), _fieldLayout);
@@ -108,9 +108,9 @@ library OffchainLand {
   /**
    * @notice Set pixelId.
    */
-  function _setPixelId(bytes32 chaindId, uint8 landId, uint8 pixelId) internal {
+  function _setPixelId(uint16 chainId, uint8 landId, uint8 pixelId) internal {
     bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = chaindId;
+    _keyTuple[0] = bytes32(uint256(chainId));
     _keyTuple[1] = bytes32(uint256(landId));
 
     StoreCore.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked((pixelId)), _fieldLayout);
@@ -119,14 +119,14 @@ library OffchainLand {
   /**
    * @notice Set the full data using individual values.
    */
-  function set(bytes32 chaindId, uint8 landId, uint8 pixelId) internal {
+  function set(uint16 chainId, uint8 landId, uint8 pixelId) internal {
     bytes memory _staticData = encodeStatic(pixelId);
 
     PackedCounter _encodedLengths;
     bytes memory _dynamicData;
 
     bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = chaindId;
+    _keyTuple[0] = bytes32(uint256(chainId));
     _keyTuple[1] = bytes32(uint256(landId));
 
     StoreSwitch.setRecord(_tableId, _keyTuple, _staticData, _encodedLengths, _dynamicData);
@@ -135,14 +135,14 @@ library OffchainLand {
   /**
    * @notice Set the full data using individual values.
    */
-  function _set(bytes32 chaindId, uint8 landId, uint8 pixelId) internal {
+  function _set(uint16 chainId, uint8 landId, uint8 pixelId) internal {
     bytes memory _staticData = encodeStatic(pixelId);
 
     PackedCounter _encodedLengths;
     bytes memory _dynamicData;
 
     bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = chaindId;
+    _keyTuple[0] = bytes32(uint256(chainId));
     _keyTuple[1] = bytes32(uint256(landId));
 
     StoreCore.setRecord(_tableId, _keyTuple, _staticData, _encodedLengths, _dynamicData, _fieldLayout);
@@ -168,9 +168,9 @@ library OffchainLand {
   /**
    * @notice Delete all data for given keys.
    */
-  function deleteRecord(bytes32 chaindId, uint8 landId) internal {
+  function deleteRecord(uint16 chainId, uint8 landId) internal {
     bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = chaindId;
+    _keyTuple[0] = bytes32(uint256(chainId));
     _keyTuple[1] = bytes32(uint256(landId));
 
     StoreSwitch.deleteRecord(_tableId, _keyTuple);
@@ -179,9 +179,9 @@ library OffchainLand {
   /**
    * @notice Delete all data for given keys.
    */
-  function _deleteRecord(bytes32 chaindId, uint8 landId) internal {
+  function _deleteRecord(uint16 chainId, uint8 landId) internal {
     bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = chaindId;
+    _keyTuple[0] = bytes32(uint256(chainId));
     _keyTuple[1] = bytes32(uint256(landId));
 
     StoreCore.deleteRecord(_tableId, _keyTuple, _fieldLayout);
@@ -213,9 +213,9 @@ library OffchainLand {
   /**
    * @notice Encode keys as a bytes32 array using this table's field layout.
    */
-  function encodeKeyTuple(bytes32 chaindId, uint8 landId) internal pure returns (bytes32[] memory) {
+  function encodeKeyTuple(uint16 chainId, uint8 landId) internal pure returns (bytes32[] memory) {
     bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = chaindId;
+    _keyTuple[0] = bytes32(uint256(chainId));
     _keyTuple[1] = bytes32(uint256(landId));
 
     return _keyTuple;

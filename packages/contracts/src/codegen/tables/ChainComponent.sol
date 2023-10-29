@@ -50,7 +50,7 @@ library ChainComponent {
    */
   function getKeySchema() internal pure returns (Schema) {
     SchemaType[] memory _keySchema = new SchemaType[](1);
-    _keySchema[0] = SchemaType.BYTES32;
+    _keySchema[0] = SchemaType.UINT16;
 
     return SchemaLib.encode(_keySchema);
   }
@@ -105,9 +105,9 @@ library ChainComponent {
   /**
    * @notice Get landCount.
    */
-  function getLandCount(bytes32 chainId) internal view returns (uint8 landCount) {
+  function getLandCount(uint16 chainId) internal view returns (uint8 landCount) {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = chainId;
+    _keyTuple[0] = bytes32(uint256(chainId));
 
     bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 0, _fieldLayout);
     return (uint8(bytes1(_blob)));
@@ -116,9 +116,9 @@ library ChainComponent {
   /**
    * @notice Get landCount.
    */
-  function _getLandCount(bytes32 chainId) internal view returns (uint8 landCount) {
+  function _getLandCount(uint16 chainId) internal view returns (uint8 landCount) {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = chainId;
+    _keyTuple[0] = bytes32(uint256(chainId));
 
     bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 0, _fieldLayout);
     return (uint8(bytes1(_blob)));
@@ -127,9 +127,9 @@ library ChainComponent {
   /**
    * @notice Set landCount.
    */
-  function setLandCount(bytes32 chainId, uint8 landCount) internal {
+  function setLandCount(uint16 chainId, uint8 landCount) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = chainId;
+    _keyTuple[0] = bytes32(uint256(chainId));
 
     StoreSwitch.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked((landCount)), _fieldLayout);
   }
@@ -137,9 +137,9 @@ library ChainComponent {
   /**
    * @notice Set landCount.
    */
-  function _setLandCount(bytes32 chainId, uint8 landCount) internal {
+  function _setLandCount(uint16 chainId, uint8 landCount) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = chainId;
+    _keyTuple[0] = bytes32(uint256(chainId));
 
     StoreCore.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked((landCount)), _fieldLayout);
   }
@@ -147,9 +147,9 @@ library ChainComponent {
   /**
    * @notice Get chainName.
    */
-  function getChainName(bytes32 chainId) internal view returns (string memory chainName) {
+  function getChainName(uint16 chainId) internal view returns (string memory chainName) {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = chainId;
+    _keyTuple[0] = bytes32(uint256(chainId));
 
     bytes memory _blob = StoreSwitch.getDynamicField(_tableId, _keyTuple, 0);
     return (string(_blob));
@@ -158,9 +158,9 @@ library ChainComponent {
   /**
    * @notice Get chainName.
    */
-  function _getChainName(bytes32 chainId) internal view returns (string memory chainName) {
+  function _getChainName(uint16 chainId) internal view returns (string memory chainName) {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = chainId;
+    _keyTuple[0] = bytes32(uint256(chainId));
 
     bytes memory _blob = StoreCore.getDynamicField(_tableId, _keyTuple, 0);
     return (string(_blob));
@@ -169,9 +169,9 @@ library ChainComponent {
   /**
    * @notice Set chainName.
    */
-  function setChainName(bytes32 chainId, string memory chainName) internal {
+  function setChainName(uint16 chainId, string memory chainName) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = chainId;
+    _keyTuple[0] = bytes32(uint256(chainId));
 
     StoreSwitch.setDynamicField(_tableId, _keyTuple, 0, bytes((chainName)));
   }
@@ -179,9 +179,9 @@ library ChainComponent {
   /**
    * @notice Set chainName.
    */
-  function _setChainName(bytes32 chainId, string memory chainName) internal {
+  function _setChainName(uint16 chainId, string memory chainName) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = chainId;
+    _keyTuple[0] = bytes32(uint256(chainId));
 
     StoreCore.setDynamicField(_tableId, _keyTuple, 0, bytes((chainName)));
   }
@@ -189,9 +189,9 @@ library ChainComponent {
   /**
    * @notice Get the length of chainName.
    */
-  function lengthChainName(bytes32 chainId) internal view returns (uint256) {
+  function lengthChainName(uint16 chainId) internal view returns (uint256) {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = chainId;
+    _keyTuple[0] = bytes32(uint256(chainId));
 
     uint256 _byteLength = StoreSwitch.getDynamicFieldLength(_tableId, _keyTuple, 0);
     unchecked {
@@ -202,9 +202,9 @@ library ChainComponent {
   /**
    * @notice Get the length of chainName.
    */
-  function _lengthChainName(bytes32 chainId) internal view returns (uint256) {
+  function _lengthChainName(uint16 chainId) internal view returns (uint256) {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = chainId;
+    _keyTuple[0] = bytes32(uint256(chainId));
 
     uint256 _byteLength = StoreCore.getDynamicFieldLength(_tableId, _keyTuple, 0);
     unchecked {
@@ -216,9 +216,9 @@ library ChainComponent {
    * @notice Get an item of chainName.
    * @dev Reverts with Store_IndexOutOfBounds if `_index` is out of bounds for the array.
    */
-  function getItemChainName(bytes32 chainId, uint256 _index) internal view returns (string memory) {
+  function getItemChainName(uint16 chainId, uint256 _index) internal view returns (string memory) {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = chainId;
+    _keyTuple[0] = bytes32(uint256(chainId));
 
     unchecked {
       bytes memory _blob = StoreSwitch.getDynamicFieldSlice(_tableId, _keyTuple, 0, _index * 1, (_index + 1) * 1);
@@ -230,9 +230,9 @@ library ChainComponent {
    * @notice Get an item of chainName.
    * @dev Reverts with Store_IndexOutOfBounds if `_index` is out of bounds for the array.
    */
-  function _getItemChainName(bytes32 chainId, uint256 _index) internal view returns (string memory) {
+  function _getItemChainName(uint16 chainId, uint256 _index) internal view returns (string memory) {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = chainId;
+    _keyTuple[0] = bytes32(uint256(chainId));
 
     unchecked {
       bytes memory _blob = StoreCore.getDynamicFieldSlice(_tableId, _keyTuple, 0, _index * 1, (_index + 1) * 1);
@@ -243,9 +243,9 @@ library ChainComponent {
   /**
    * @notice Push a slice to chainName.
    */
-  function pushChainName(bytes32 chainId, string memory _slice) internal {
+  function pushChainName(uint16 chainId, string memory _slice) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = chainId;
+    _keyTuple[0] = bytes32(uint256(chainId));
 
     StoreSwitch.pushToDynamicField(_tableId, _keyTuple, 0, bytes((_slice)));
   }
@@ -253,9 +253,9 @@ library ChainComponent {
   /**
    * @notice Push a slice to chainName.
    */
-  function _pushChainName(bytes32 chainId, string memory _slice) internal {
+  function _pushChainName(uint16 chainId, string memory _slice) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = chainId;
+    _keyTuple[0] = bytes32(uint256(chainId));
 
     StoreCore.pushToDynamicField(_tableId, _keyTuple, 0, bytes((_slice)));
   }
@@ -263,9 +263,9 @@ library ChainComponent {
   /**
    * @notice Pop a slice from chainName.
    */
-  function popChainName(bytes32 chainId) internal {
+  function popChainName(uint16 chainId) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = chainId;
+    _keyTuple[0] = bytes32(uint256(chainId));
 
     StoreSwitch.popFromDynamicField(_tableId, _keyTuple, 0, 1);
   }
@@ -273,9 +273,9 @@ library ChainComponent {
   /**
    * @notice Pop a slice from chainName.
    */
-  function _popChainName(bytes32 chainId) internal {
+  function _popChainName(uint16 chainId) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = chainId;
+    _keyTuple[0] = bytes32(uint256(chainId));
 
     StoreCore.popFromDynamicField(_tableId, _keyTuple, 0, 1);
   }
@@ -283,9 +283,9 @@ library ChainComponent {
   /**
    * @notice Update a slice of chainName at `_index`.
    */
-  function updateChainName(bytes32 chainId, uint256 _index, string memory _slice) internal {
+  function updateChainName(uint16 chainId, uint256 _index, string memory _slice) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = chainId;
+    _keyTuple[0] = bytes32(uint256(chainId));
 
     unchecked {
       bytes memory _encoded = bytes((_slice));
@@ -296,9 +296,9 @@ library ChainComponent {
   /**
    * @notice Update a slice of chainName at `_index`.
    */
-  function _updateChainName(bytes32 chainId, uint256 _index, string memory _slice) internal {
+  function _updateChainName(uint16 chainId, uint256 _index, string memory _slice) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = chainId;
+    _keyTuple[0] = bytes32(uint256(chainId));
 
     unchecked {
       bytes memory _encoded = bytes((_slice));
@@ -309,9 +309,9 @@ library ChainComponent {
   /**
    * @notice Get chainColor.
    */
-  function getChainColor(bytes32 chainId) internal view returns (string memory chainColor) {
+  function getChainColor(uint16 chainId) internal view returns (string memory chainColor) {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = chainId;
+    _keyTuple[0] = bytes32(uint256(chainId));
 
     bytes memory _blob = StoreSwitch.getDynamicField(_tableId, _keyTuple, 1);
     return (string(_blob));
@@ -320,9 +320,9 @@ library ChainComponent {
   /**
    * @notice Get chainColor.
    */
-  function _getChainColor(bytes32 chainId) internal view returns (string memory chainColor) {
+  function _getChainColor(uint16 chainId) internal view returns (string memory chainColor) {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = chainId;
+    _keyTuple[0] = bytes32(uint256(chainId));
 
     bytes memory _blob = StoreCore.getDynamicField(_tableId, _keyTuple, 1);
     return (string(_blob));
@@ -331,9 +331,9 @@ library ChainComponent {
   /**
    * @notice Set chainColor.
    */
-  function setChainColor(bytes32 chainId, string memory chainColor) internal {
+  function setChainColor(uint16 chainId, string memory chainColor) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = chainId;
+    _keyTuple[0] = bytes32(uint256(chainId));
 
     StoreSwitch.setDynamicField(_tableId, _keyTuple, 1, bytes((chainColor)));
   }
@@ -341,9 +341,9 @@ library ChainComponent {
   /**
    * @notice Set chainColor.
    */
-  function _setChainColor(bytes32 chainId, string memory chainColor) internal {
+  function _setChainColor(uint16 chainId, string memory chainColor) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = chainId;
+    _keyTuple[0] = bytes32(uint256(chainId));
 
     StoreCore.setDynamicField(_tableId, _keyTuple, 1, bytes((chainColor)));
   }
@@ -351,9 +351,9 @@ library ChainComponent {
   /**
    * @notice Get the length of chainColor.
    */
-  function lengthChainColor(bytes32 chainId) internal view returns (uint256) {
+  function lengthChainColor(uint16 chainId) internal view returns (uint256) {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = chainId;
+    _keyTuple[0] = bytes32(uint256(chainId));
 
     uint256 _byteLength = StoreSwitch.getDynamicFieldLength(_tableId, _keyTuple, 1);
     unchecked {
@@ -364,9 +364,9 @@ library ChainComponent {
   /**
    * @notice Get the length of chainColor.
    */
-  function _lengthChainColor(bytes32 chainId) internal view returns (uint256) {
+  function _lengthChainColor(uint16 chainId) internal view returns (uint256) {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = chainId;
+    _keyTuple[0] = bytes32(uint256(chainId));
 
     uint256 _byteLength = StoreCore.getDynamicFieldLength(_tableId, _keyTuple, 1);
     unchecked {
@@ -378,9 +378,9 @@ library ChainComponent {
    * @notice Get an item of chainColor.
    * @dev Reverts with Store_IndexOutOfBounds if `_index` is out of bounds for the array.
    */
-  function getItemChainColor(bytes32 chainId, uint256 _index) internal view returns (string memory) {
+  function getItemChainColor(uint16 chainId, uint256 _index) internal view returns (string memory) {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = chainId;
+    _keyTuple[0] = bytes32(uint256(chainId));
 
     unchecked {
       bytes memory _blob = StoreSwitch.getDynamicFieldSlice(_tableId, _keyTuple, 1, _index * 1, (_index + 1) * 1);
@@ -392,9 +392,9 @@ library ChainComponent {
    * @notice Get an item of chainColor.
    * @dev Reverts with Store_IndexOutOfBounds if `_index` is out of bounds for the array.
    */
-  function _getItemChainColor(bytes32 chainId, uint256 _index) internal view returns (string memory) {
+  function _getItemChainColor(uint16 chainId, uint256 _index) internal view returns (string memory) {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = chainId;
+    _keyTuple[0] = bytes32(uint256(chainId));
 
     unchecked {
       bytes memory _blob = StoreCore.getDynamicFieldSlice(_tableId, _keyTuple, 1, _index * 1, (_index + 1) * 1);
@@ -405,9 +405,9 @@ library ChainComponent {
   /**
    * @notice Push a slice to chainColor.
    */
-  function pushChainColor(bytes32 chainId, string memory _slice) internal {
+  function pushChainColor(uint16 chainId, string memory _slice) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = chainId;
+    _keyTuple[0] = bytes32(uint256(chainId));
 
     StoreSwitch.pushToDynamicField(_tableId, _keyTuple, 1, bytes((_slice)));
   }
@@ -415,9 +415,9 @@ library ChainComponent {
   /**
    * @notice Push a slice to chainColor.
    */
-  function _pushChainColor(bytes32 chainId, string memory _slice) internal {
+  function _pushChainColor(uint16 chainId, string memory _slice) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = chainId;
+    _keyTuple[0] = bytes32(uint256(chainId));
 
     StoreCore.pushToDynamicField(_tableId, _keyTuple, 1, bytes((_slice)));
   }
@@ -425,9 +425,9 @@ library ChainComponent {
   /**
    * @notice Pop a slice from chainColor.
    */
-  function popChainColor(bytes32 chainId) internal {
+  function popChainColor(uint16 chainId) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = chainId;
+    _keyTuple[0] = bytes32(uint256(chainId));
 
     StoreSwitch.popFromDynamicField(_tableId, _keyTuple, 1, 1);
   }
@@ -435,9 +435,9 @@ library ChainComponent {
   /**
    * @notice Pop a slice from chainColor.
    */
-  function _popChainColor(bytes32 chainId) internal {
+  function _popChainColor(uint16 chainId) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = chainId;
+    _keyTuple[0] = bytes32(uint256(chainId));
 
     StoreCore.popFromDynamicField(_tableId, _keyTuple, 1, 1);
   }
@@ -445,9 +445,9 @@ library ChainComponent {
   /**
    * @notice Update a slice of chainColor at `_index`.
    */
-  function updateChainColor(bytes32 chainId, uint256 _index, string memory _slice) internal {
+  function updateChainColor(uint16 chainId, uint256 _index, string memory _slice) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = chainId;
+    _keyTuple[0] = bytes32(uint256(chainId));
 
     unchecked {
       bytes memory _encoded = bytes((_slice));
@@ -458,9 +458,9 @@ library ChainComponent {
   /**
    * @notice Update a slice of chainColor at `_index`.
    */
-  function _updateChainColor(bytes32 chainId, uint256 _index, string memory _slice) internal {
+  function _updateChainColor(uint16 chainId, uint256 _index, string memory _slice) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = chainId;
+    _keyTuple[0] = bytes32(uint256(chainId));
 
     unchecked {
       bytes memory _encoded = bytes((_slice));
@@ -471,9 +471,9 @@ library ChainComponent {
   /**
    * @notice Get the full data.
    */
-  function get(bytes32 chainId) internal view returns (ChainComponentData memory _table) {
+  function get(uint16 chainId) internal view returns (ChainComponentData memory _table) {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = chainId;
+    _keyTuple[0] = bytes32(uint256(chainId));
 
     (bytes memory _staticData, PackedCounter _encodedLengths, bytes memory _dynamicData) = StoreSwitch.getRecord(
       _tableId,
@@ -486,9 +486,9 @@ library ChainComponent {
   /**
    * @notice Get the full data.
    */
-  function _get(bytes32 chainId) internal view returns (ChainComponentData memory _table) {
+  function _get(uint16 chainId) internal view returns (ChainComponentData memory _table) {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = chainId;
+    _keyTuple[0] = bytes32(uint256(chainId));
 
     (bytes memory _staticData, PackedCounter _encodedLengths, bytes memory _dynamicData) = StoreCore.getRecord(
       _tableId,
@@ -501,14 +501,14 @@ library ChainComponent {
   /**
    * @notice Set the full data using individual values.
    */
-  function set(bytes32 chainId, uint8 landCount, string memory chainName, string memory chainColor) internal {
+  function set(uint16 chainId, uint8 landCount, string memory chainName, string memory chainColor) internal {
     bytes memory _staticData = encodeStatic(landCount);
 
     PackedCounter _encodedLengths = encodeLengths(chainName, chainColor);
     bytes memory _dynamicData = encodeDynamic(chainName, chainColor);
 
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = chainId;
+    _keyTuple[0] = bytes32(uint256(chainId));
 
     StoreSwitch.setRecord(_tableId, _keyTuple, _staticData, _encodedLengths, _dynamicData);
   }
@@ -516,14 +516,14 @@ library ChainComponent {
   /**
    * @notice Set the full data using individual values.
    */
-  function _set(bytes32 chainId, uint8 landCount, string memory chainName, string memory chainColor) internal {
+  function _set(uint16 chainId, uint8 landCount, string memory chainName, string memory chainColor) internal {
     bytes memory _staticData = encodeStatic(landCount);
 
     PackedCounter _encodedLengths = encodeLengths(chainName, chainColor);
     bytes memory _dynamicData = encodeDynamic(chainName, chainColor);
 
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = chainId;
+    _keyTuple[0] = bytes32(uint256(chainId));
 
     StoreCore.setRecord(_tableId, _keyTuple, _staticData, _encodedLengths, _dynamicData, _fieldLayout);
   }
@@ -531,14 +531,14 @@ library ChainComponent {
   /**
    * @notice Set the full data using the data struct.
    */
-  function set(bytes32 chainId, ChainComponentData memory _table) internal {
+  function set(uint16 chainId, ChainComponentData memory _table) internal {
     bytes memory _staticData = encodeStatic(_table.landCount);
 
     PackedCounter _encodedLengths = encodeLengths(_table.chainName, _table.chainColor);
     bytes memory _dynamicData = encodeDynamic(_table.chainName, _table.chainColor);
 
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = chainId;
+    _keyTuple[0] = bytes32(uint256(chainId));
 
     StoreSwitch.setRecord(_tableId, _keyTuple, _staticData, _encodedLengths, _dynamicData);
   }
@@ -546,14 +546,14 @@ library ChainComponent {
   /**
    * @notice Set the full data using the data struct.
    */
-  function _set(bytes32 chainId, ChainComponentData memory _table) internal {
+  function _set(uint16 chainId, ChainComponentData memory _table) internal {
     bytes memory _staticData = encodeStatic(_table.landCount);
 
     PackedCounter _encodedLengths = encodeLengths(_table.chainName, _table.chainColor);
     bytes memory _dynamicData = encodeDynamic(_table.chainName, _table.chainColor);
 
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = chainId;
+    _keyTuple[0] = bytes32(uint256(chainId));
 
     StoreCore.setRecord(_tableId, _keyTuple, _staticData, _encodedLengths, _dynamicData, _fieldLayout);
   }
@@ -605,9 +605,9 @@ library ChainComponent {
   /**
    * @notice Delete all data for given keys.
    */
-  function deleteRecord(bytes32 chainId) internal {
+  function deleteRecord(uint16 chainId) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = chainId;
+    _keyTuple[0] = bytes32(uint256(chainId));
 
     StoreSwitch.deleteRecord(_tableId, _keyTuple);
   }
@@ -615,9 +615,9 @@ library ChainComponent {
   /**
    * @notice Delete all data for given keys.
    */
-  function _deleteRecord(bytes32 chainId) internal {
+  function _deleteRecord(uint16 chainId) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = chainId;
+    _keyTuple[0] = bytes32(uint256(chainId));
 
     StoreCore.deleteRecord(_tableId, _keyTuple, _fieldLayout);
   }
@@ -674,9 +674,9 @@ library ChainComponent {
   /**
    * @notice Encode keys as a bytes32 array using this table's field layout.
    */
-  function encodeKeyTuple(bytes32 chainId) internal pure returns (bytes32[] memory) {
+  function encodeKeyTuple(uint16 chainId) internal pure returns (bytes32[] memory) {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = chainId;
+    _keyTuple[0] = bytes32(uint256(chainId));
 
     return _keyTuple;
   }

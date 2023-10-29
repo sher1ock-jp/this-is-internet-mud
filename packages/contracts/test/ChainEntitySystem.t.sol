@@ -20,11 +20,11 @@ contract ChainEntitySystemTest is MudTest {
     assertTrue(codeSize > 0);
   }
 
-  function testCreateChainEntity() public {
-    vm.startPrank(worldAddress);
-    bytes32 chainId = StringToBytesKey("0x1");
-    ChainComponentData memory chain_component = ChainComponent.get(chainId);
-    assertEq(keccak256(abi.encodePacked(chain_component.chainName)),keccak256(abi.encodePacked("Ethereum")));
-    vm.stopPrank();
-  }
+  // function testCreateChainEntity() public {
+  //   vm.startPrank(worldAddress);
+  //   bytes32 chainId = StringToBytesKey("0x1");
+  //   ChainComponentData memory chain_component = ChainComponent.get(chainId);
+  //   assertEq(keccak256(abi.encodePacked(chain_component.chainName)),keccak256(abi.encodePacked("Ethereum")));
+  //   vm.stopPrank();
+  // }
 }

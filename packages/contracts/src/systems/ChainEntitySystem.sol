@@ -11,14 +11,14 @@ import {StringToBytesKey} from "./library/StringToBytesKey.sol";
 
 contract ChainEntitySystem is System {
     function createChainEntity(
-        string memory chain_id,
+        uint16 chain_id,
         string memory chain_name,
         string memory chain_color
     ) public {
-        bytes32 _chain_id = StringToBytesKey(chain_id); // cant use string as key
+        // bytes32 _chain_id = StringToBytesKey(chain_id); // cant use string as key
         uint8 initial_land_count = 1;
         ChainComponent.set(
-            _chain_id,
+            chain_id,
             initial_land_count,
             chain_name,
             chain_color
@@ -26,12 +26,12 @@ contract ChainEntitySystem is System {
     }
 
     function addLandEntity(
-        string memory chain_id
+        uint16 chain_id
     ) public {
-        bytes32 _chain_id = StringToBytesKey(chain_id); // cant use string as key
-        uint8 land_count = ChainComponent.getLandCount(_chain_id) + 1;
+        // bytes32 _chain_id = StringToBytesKey(chain_id); // cant use string as key
+        uint8 land_count = ChainComponent.getLandCount(chain_id) + 1;
         ChainComponent.setLandCount(
-            _chain_id,
+            chain_id,
             land_count
         );
     }

@@ -26,7 +26,7 @@ ResourceId constant _tableId = ResourceId.wrap(
 ResourceId constant PixelTableId = _tableId;
 
 FieldLayout constant _fieldLayout = FieldLayout.wrap(
-  0x0017040001140101000000000000000000000000000000000000000000000000
+  0x001a060001140101020100000000000000000000000000000000000000000000
 );
 
 struct PixelData {
@@ -34,6 +34,8 @@ struct PixelData {
   address contractAddress;
   uint8 connectedLandId;
   uint8 connectedPixelId;
+  uint16 chainID;
+  uint8 landID;
 }
 
 library Pixel {
@@ -51,7 +53,7 @@ library Pixel {
    */
   function getKeySchema() internal pure returns (Schema) {
     SchemaType[] memory _keySchema = new SchemaType[](3);
-    _keySchema[0] = SchemaType.BYTES32;
+    _keySchema[0] = SchemaType.UINT16;
     _keySchema[1] = SchemaType.UINT8;
     _keySchema[2] = SchemaType.UINT8;
 
@@ -63,11 +65,13 @@ library Pixel {
    * @return _valueSchema The value schema for the table.
    */
   function getValueSchema() internal pure returns (Schema) {
-    SchemaType[] memory _valueSchema = new SchemaType[](4);
+    SchemaType[] memory _valueSchema = new SchemaType[](6);
     _valueSchema[0] = SchemaType.UINT8;
     _valueSchema[1] = SchemaType.ADDRESS;
     _valueSchema[2] = SchemaType.UINT8;
     _valueSchema[3] = SchemaType.UINT8;
+    _valueSchema[4] = SchemaType.UINT16;
+    _valueSchema[5] = SchemaType.UINT8;
 
     return SchemaLib.encode(_valueSchema);
   }
@@ -78,7 +82,7 @@ library Pixel {
    */
   function getKeyNames() internal pure returns (string[] memory keyNames) {
     keyNames = new string[](3);
-    keyNames[0] = "chaindId";
+    keyNames[0] = "chainId";
     keyNames[1] = "landId";
     keyNames[2] = "pixelId";
   }
@@ -88,11 +92,13 @@ library Pixel {
    * @return fieldNames An array of strings with the names of value fields.
    */
   function getFieldNames() internal pure returns (string[] memory fieldNames) {
-    fieldNames = new string[](4);
+    fieldNames = new string[](6);
     fieldNames[0] = "pixelColor";
     fieldNames[1] = "contractAddress";
     fieldNames[2] = "connectedLandId";
     fieldNames[3] = "connectedPixelId";
+    fieldNames[4] = "chainID";
+    fieldNames[5] = "landID";
   }
 
   /**
@@ -112,9 +118,9 @@ library Pixel {
   /**
    * @notice Get pixelColor.
    */
-  function getPixelColor(bytes32 chaindId, uint8 landId, uint8 pixelId) internal view returns (uint8 pixelColor) {
+  function getPixelColor(uint16 chainId, uint8 landId, uint8 pixelId) internal view returns (uint8 pixelColor) {
     bytes32[] memory _keyTuple = new bytes32[](3);
-    _keyTuple[0] = chaindId;
+    _keyTuple[0] = bytes32(uint256(chainId));
     _keyTuple[1] = bytes32(uint256(landId));
     _keyTuple[2] = bytes32(uint256(pixelId));
 
@@ -125,9 +131,9 @@ library Pixel {
   /**
    * @notice Get pixelColor.
    */
-  function _getPixelColor(bytes32 chaindId, uint8 landId, uint8 pixelId) internal view returns (uint8 pixelColor) {
+  function _getPixelColor(uint16 chainId, uint8 landId, uint8 pixelId) internal view returns (uint8 pixelColor) {
     bytes32[] memory _keyTuple = new bytes32[](3);
-    _keyTuple[0] = chaindId;
+    _keyTuple[0] = bytes32(uint256(chainId));
     _keyTuple[1] = bytes32(uint256(landId));
     _keyTuple[2] = bytes32(uint256(pixelId));
 
@@ -138,9 +144,9 @@ library Pixel {
   /**
    * @notice Set pixelColor.
    */
-  function setPixelColor(bytes32 chaindId, uint8 landId, uint8 pixelId, uint8 pixelColor) internal {
+  function setPixelColor(uint16 chainId, uint8 landId, uint8 pixelId, uint8 pixelColor) internal {
     bytes32[] memory _keyTuple = new bytes32[](3);
-    _keyTuple[0] = chaindId;
+    _keyTuple[0] = bytes32(uint256(chainId));
     _keyTuple[1] = bytes32(uint256(landId));
     _keyTuple[2] = bytes32(uint256(pixelId));
 
@@ -150,9 +156,9 @@ library Pixel {
   /**
    * @notice Set pixelColor.
    */
-  function _setPixelColor(bytes32 chaindId, uint8 landId, uint8 pixelId, uint8 pixelColor) internal {
+  function _setPixelColor(uint16 chainId, uint8 landId, uint8 pixelId, uint8 pixelColor) internal {
     bytes32[] memory _keyTuple = new bytes32[](3);
-    _keyTuple[0] = chaindId;
+    _keyTuple[0] = bytes32(uint256(chainId));
     _keyTuple[1] = bytes32(uint256(landId));
     _keyTuple[2] = bytes32(uint256(pixelId));
 
@@ -163,12 +169,12 @@ library Pixel {
    * @notice Get contractAddress.
    */
   function getContractAddress(
-    bytes32 chaindId,
+    uint16 chainId,
     uint8 landId,
     uint8 pixelId
   ) internal view returns (address contractAddress) {
     bytes32[] memory _keyTuple = new bytes32[](3);
-    _keyTuple[0] = chaindId;
+    _keyTuple[0] = bytes32(uint256(chainId));
     _keyTuple[1] = bytes32(uint256(landId));
     _keyTuple[2] = bytes32(uint256(pixelId));
 
@@ -180,12 +186,12 @@ library Pixel {
    * @notice Get contractAddress.
    */
   function _getContractAddress(
-    bytes32 chaindId,
+    uint16 chainId,
     uint8 landId,
     uint8 pixelId
   ) internal view returns (address contractAddress) {
     bytes32[] memory _keyTuple = new bytes32[](3);
-    _keyTuple[0] = chaindId;
+    _keyTuple[0] = bytes32(uint256(chainId));
     _keyTuple[1] = bytes32(uint256(landId));
     _keyTuple[2] = bytes32(uint256(pixelId));
 
@@ -196,9 +202,9 @@ library Pixel {
   /**
    * @notice Set contractAddress.
    */
-  function setContractAddress(bytes32 chaindId, uint8 landId, uint8 pixelId, address contractAddress) internal {
+  function setContractAddress(uint16 chainId, uint8 landId, uint8 pixelId, address contractAddress) internal {
     bytes32[] memory _keyTuple = new bytes32[](3);
-    _keyTuple[0] = chaindId;
+    _keyTuple[0] = bytes32(uint256(chainId));
     _keyTuple[1] = bytes32(uint256(landId));
     _keyTuple[2] = bytes32(uint256(pixelId));
 
@@ -208,9 +214,9 @@ library Pixel {
   /**
    * @notice Set contractAddress.
    */
-  function _setContractAddress(bytes32 chaindId, uint8 landId, uint8 pixelId, address contractAddress) internal {
+  function _setContractAddress(uint16 chainId, uint8 landId, uint8 pixelId, address contractAddress) internal {
     bytes32[] memory _keyTuple = new bytes32[](3);
-    _keyTuple[0] = chaindId;
+    _keyTuple[0] = bytes32(uint256(chainId));
     _keyTuple[1] = bytes32(uint256(landId));
     _keyTuple[2] = bytes32(uint256(pixelId));
 
@@ -221,12 +227,12 @@ library Pixel {
    * @notice Get connectedLandId.
    */
   function getConnectedLandId(
-    bytes32 chaindId,
+    uint16 chainId,
     uint8 landId,
     uint8 pixelId
   ) internal view returns (uint8 connectedLandId) {
     bytes32[] memory _keyTuple = new bytes32[](3);
-    _keyTuple[0] = chaindId;
+    _keyTuple[0] = bytes32(uint256(chainId));
     _keyTuple[1] = bytes32(uint256(landId));
     _keyTuple[2] = bytes32(uint256(pixelId));
 
@@ -238,12 +244,12 @@ library Pixel {
    * @notice Get connectedLandId.
    */
   function _getConnectedLandId(
-    bytes32 chaindId,
+    uint16 chainId,
     uint8 landId,
     uint8 pixelId
   ) internal view returns (uint8 connectedLandId) {
     bytes32[] memory _keyTuple = new bytes32[](3);
-    _keyTuple[0] = chaindId;
+    _keyTuple[0] = bytes32(uint256(chainId));
     _keyTuple[1] = bytes32(uint256(landId));
     _keyTuple[2] = bytes32(uint256(pixelId));
 
@@ -254,9 +260,9 @@ library Pixel {
   /**
    * @notice Set connectedLandId.
    */
-  function setConnectedLandId(bytes32 chaindId, uint8 landId, uint8 pixelId, uint8 connectedLandId) internal {
+  function setConnectedLandId(uint16 chainId, uint8 landId, uint8 pixelId, uint8 connectedLandId) internal {
     bytes32[] memory _keyTuple = new bytes32[](3);
-    _keyTuple[0] = chaindId;
+    _keyTuple[0] = bytes32(uint256(chainId));
     _keyTuple[1] = bytes32(uint256(landId));
     _keyTuple[2] = bytes32(uint256(pixelId));
 
@@ -266,9 +272,9 @@ library Pixel {
   /**
    * @notice Set connectedLandId.
    */
-  function _setConnectedLandId(bytes32 chaindId, uint8 landId, uint8 pixelId, uint8 connectedLandId) internal {
+  function _setConnectedLandId(uint16 chainId, uint8 landId, uint8 pixelId, uint8 connectedLandId) internal {
     bytes32[] memory _keyTuple = new bytes32[](3);
-    _keyTuple[0] = chaindId;
+    _keyTuple[0] = bytes32(uint256(chainId));
     _keyTuple[1] = bytes32(uint256(landId));
     _keyTuple[2] = bytes32(uint256(pixelId));
 
@@ -279,12 +285,12 @@ library Pixel {
    * @notice Get connectedPixelId.
    */
   function getConnectedPixelId(
-    bytes32 chaindId,
+    uint16 chainId,
     uint8 landId,
     uint8 pixelId
   ) internal view returns (uint8 connectedPixelId) {
     bytes32[] memory _keyTuple = new bytes32[](3);
-    _keyTuple[0] = chaindId;
+    _keyTuple[0] = bytes32(uint256(chainId));
     _keyTuple[1] = bytes32(uint256(landId));
     _keyTuple[2] = bytes32(uint256(pixelId));
 
@@ -296,12 +302,12 @@ library Pixel {
    * @notice Get connectedPixelId.
    */
   function _getConnectedPixelId(
-    bytes32 chaindId,
+    uint16 chainId,
     uint8 landId,
     uint8 pixelId
   ) internal view returns (uint8 connectedPixelId) {
     bytes32[] memory _keyTuple = new bytes32[](3);
-    _keyTuple[0] = chaindId;
+    _keyTuple[0] = bytes32(uint256(chainId));
     _keyTuple[1] = bytes32(uint256(landId));
     _keyTuple[2] = bytes32(uint256(pixelId));
 
@@ -312,9 +318,9 @@ library Pixel {
   /**
    * @notice Set connectedPixelId.
    */
-  function setConnectedPixelId(bytes32 chaindId, uint8 landId, uint8 pixelId, uint8 connectedPixelId) internal {
+  function setConnectedPixelId(uint16 chainId, uint8 landId, uint8 pixelId, uint8 connectedPixelId) internal {
     bytes32[] memory _keyTuple = new bytes32[](3);
-    _keyTuple[0] = chaindId;
+    _keyTuple[0] = bytes32(uint256(chainId));
     _keyTuple[1] = bytes32(uint256(landId));
     _keyTuple[2] = bytes32(uint256(pixelId));
 
@@ -324,9 +330,9 @@ library Pixel {
   /**
    * @notice Set connectedPixelId.
    */
-  function _setConnectedPixelId(bytes32 chaindId, uint8 landId, uint8 pixelId, uint8 connectedPixelId) internal {
+  function _setConnectedPixelId(uint16 chainId, uint8 landId, uint8 pixelId, uint8 connectedPixelId) internal {
     bytes32[] memory _keyTuple = new bytes32[](3);
-    _keyTuple[0] = chaindId;
+    _keyTuple[0] = bytes32(uint256(chainId));
     _keyTuple[1] = bytes32(uint256(landId));
     _keyTuple[2] = bytes32(uint256(pixelId));
 
@@ -334,11 +340,111 @@ library Pixel {
   }
 
   /**
+   * @notice Get chainID.
+   */
+  function getChainID(uint16 chainId, uint8 landId, uint8 pixelId) internal view returns (uint16 chainID) {
+    bytes32[] memory _keyTuple = new bytes32[](3);
+    _keyTuple[0] = bytes32(uint256(chainId));
+    _keyTuple[1] = bytes32(uint256(landId));
+    _keyTuple[2] = bytes32(uint256(pixelId));
+
+    bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 4, _fieldLayout);
+    return (uint16(bytes2(_blob)));
+  }
+
+  /**
+   * @notice Get chainID.
+   */
+  function _getChainID(uint16 chainId, uint8 landId, uint8 pixelId) internal view returns (uint16 chainID) {
+    bytes32[] memory _keyTuple = new bytes32[](3);
+    _keyTuple[0] = bytes32(uint256(chainId));
+    _keyTuple[1] = bytes32(uint256(landId));
+    _keyTuple[2] = bytes32(uint256(pixelId));
+
+    bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 4, _fieldLayout);
+    return (uint16(bytes2(_blob)));
+  }
+
+  /**
+   * @notice Set chainID.
+   */
+  function setChainID(uint16 chainId, uint8 landId, uint8 pixelId, uint16 chainID) internal {
+    bytes32[] memory _keyTuple = new bytes32[](3);
+    _keyTuple[0] = bytes32(uint256(chainId));
+    _keyTuple[1] = bytes32(uint256(landId));
+    _keyTuple[2] = bytes32(uint256(pixelId));
+
+    StoreSwitch.setStaticField(_tableId, _keyTuple, 4, abi.encodePacked((chainID)), _fieldLayout);
+  }
+
+  /**
+   * @notice Set chainID.
+   */
+  function _setChainID(uint16 chainId, uint8 landId, uint8 pixelId, uint16 chainID) internal {
+    bytes32[] memory _keyTuple = new bytes32[](3);
+    _keyTuple[0] = bytes32(uint256(chainId));
+    _keyTuple[1] = bytes32(uint256(landId));
+    _keyTuple[2] = bytes32(uint256(pixelId));
+
+    StoreCore.setStaticField(_tableId, _keyTuple, 4, abi.encodePacked((chainID)), _fieldLayout);
+  }
+
+  /**
+   * @notice Get landID.
+   */
+  function getLandID(uint16 chainId, uint8 landId, uint8 pixelId) internal view returns (uint8 landID) {
+    bytes32[] memory _keyTuple = new bytes32[](3);
+    _keyTuple[0] = bytes32(uint256(chainId));
+    _keyTuple[1] = bytes32(uint256(landId));
+    _keyTuple[2] = bytes32(uint256(pixelId));
+
+    bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 5, _fieldLayout);
+    return (uint8(bytes1(_blob)));
+  }
+
+  /**
+   * @notice Get landID.
+   */
+  function _getLandID(uint16 chainId, uint8 landId, uint8 pixelId) internal view returns (uint8 landID) {
+    bytes32[] memory _keyTuple = new bytes32[](3);
+    _keyTuple[0] = bytes32(uint256(chainId));
+    _keyTuple[1] = bytes32(uint256(landId));
+    _keyTuple[2] = bytes32(uint256(pixelId));
+
+    bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 5, _fieldLayout);
+    return (uint8(bytes1(_blob)));
+  }
+
+  /**
+   * @notice Set landID.
+   */
+  function setLandID(uint16 chainId, uint8 landId, uint8 pixelId, uint8 landID) internal {
+    bytes32[] memory _keyTuple = new bytes32[](3);
+    _keyTuple[0] = bytes32(uint256(chainId));
+    _keyTuple[1] = bytes32(uint256(landId));
+    _keyTuple[2] = bytes32(uint256(pixelId));
+
+    StoreSwitch.setStaticField(_tableId, _keyTuple, 5, abi.encodePacked((landID)), _fieldLayout);
+  }
+
+  /**
+   * @notice Set landID.
+   */
+  function _setLandID(uint16 chainId, uint8 landId, uint8 pixelId, uint8 landID) internal {
+    bytes32[] memory _keyTuple = new bytes32[](3);
+    _keyTuple[0] = bytes32(uint256(chainId));
+    _keyTuple[1] = bytes32(uint256(landId));
+    _keyTuple[2] = bytes32(uint256(pixelId));
+
+    StoreCore.setStaticField(_tableId, _keyTuple, 5, abi.encodePacked((landID)), _fieldLayout);
+  }
+
+  /**
    * @notice Get the full data.
    */
-  function get(bytes32 chaindId, uint8 landId, uint8 pixelId) internal view returns (PixelData memory _table) {
+  function get(uint16 chainId, uint8 landId, uint8 pixelId) internal view returns (PixelData memory _table) {
     bytes32[] memory _keyTuple = new bytes32[](3);
-    _keyTuple[0] = chaindId;
+    _keyTuple[0] = bytes32(uint256(chainId));
     _keyTuple[1] = bytes32(uint256(landId));
     _keyTuple[2] = bytes32(uint256(pixelId));
 
@@ -353,9 +459,9 @@ library Pixel {
   /**
    * @notice Get the full data.
    */
-  function _get(bytes32 chaindId, uint8 landId, uint8 pixelId) internal view returns (PixelData memory _table) {
+  function _get(uint16 chainId, uint8 landId, uint8 pixelId) internal view returns (PixelData memory _table) {
     bytes32[] memory _keyTuple = new bytes32[](3);
-    _keyTuple[0] = chaindId;
+    _keyTuple[0] = bytes32(uint256(chainId));
     _keyTuple[1] = bytes32(uint256(landId));
     _keyTuple[2] = bytes32(uint256(pixelId));
 
@@ -371,21 +477,30 @@ library Pixel {
    * @notice Set the full data using individual values.
    */
   function set(
-    bytes32 chaindId,
+    uint16 chainId,
     uint8 landId,
     uint8 pixelId,
     uint8 pixelColor,
     address contractAddress,
     uint8 connectedLandId,
-    uint8 connectedPixelId
+    uint8 connectedPixelId,
+    uint16 chainID,
+    uint8 landID
   ) internal {
-    bytes memory _staticData = encodeStatic(pixelColor, contractAddress, connectedLandId, connectedPixelId);
+    bytes memory _staticData = encodeStatic(
+      pixelColor,
+      contractAddress,
+      connectedLandId,
+      connectedPixelId,
+      chainID,
+      landID
+    );
 
     PackedCounter _encodedLengths;
     bytes memory _dynamicData;
 
     bytes32[] memory _keyTuple = new bytes32[](3);
-    _keyTuple[0] = chaindId;
+    _keyTuple[0] = bytes32(uint256(chainId));
     _keyTuple[1] = bytes32(uint256(landId));
     _keyTuple[2] = bytes32(uint256(pixelId));
 
@@ -396,21 +511,30 @@ library Pixel {
    * @notice Set the full data using individual values.
    */
   function _set(
-    bytes32 chaindId,
+    uint16 chainId,
     uint8 landId,
     uint8 pixelId,
     uint8 pixelColor,
     address contractAddress,
     uint8 connectedLandId,
-    uint8 connectedPixelId
+    uint8 connectedPixelId,
+    uint16 chainID,
+    uint8 landID
   ) internal {
-    bytes memory _staticData = encodeStatic(pixelColor, contractAddress, connectedLandId, connectedPixelId);
+    bytes memory _staticData = encodeStatic(
+      pixelColor,
+      contractAddress,
+      connectedLandId,
+      connectedPixelId,
+      chainID,
+      landID
+    );
 
     PackedCounter _encodedLengths;
     bytes memory _dynamicData;
 
     bytes32[] memory _keyTuple = new bytes32[](3);
-    _keyTuple[0] = chaindId;
+    _keyTuple[0] = bytes32(uint256(chainId));
     _keyTuple[1] = bytes32(uint256(landId));
     _keyTuple[2] = bytes32(uint256(pixelId));
 
@@ -420,19 +544,21 @@ library Pixel {
   /**
    * @notice Set the full data using the data struct.
    */
-  function set(bytes32 chaindId, uint8 landId, uint8 pixelId, PixelData memory _table) internal {
+  function set(uint16 chainId, uint8 landId, uint8 pixelId, PixelData memory _table) internal {
     bytes memory _staticData = encodeStatic(
       _table.pixelColor,
       _table.contractAddress,
       _table.connectedLandId,
-      _table.connectedPixelId
+      _table.connectedPixelId,
+      _table.chainID,
+      _table.landID
     );
 
     PackedCounter _encodedLengths;
     bytes memory _dynamicData;
 
     bytes32[] memory _keyTuple = new bytes32[](3);
-    _keyTuple[0] = chaindId;
+    _keyTuple[0] = bytes32(uint256(chainId));
     _keyTuple[1] = bytes32(uint256(landId));
     _keyTuple[2] = bytes32(uint256(pixelId));
 
@@ -442,19 +568,21 @@ library Pixel {
   /**
    * @notice Set the full data using the data struct.
    */
-  function _set(bytes32 chaindId, uint8 landId, uint8 pixelId, PixelData memory _table) internal {
+  function _set(uint16 chainId, uint8 landId, uint8 pixelId, PixelData memory _table) internal {
     bytes memory _staticData = encodeStatic(
       _table.pixelColor,
       _table.contractAddress,
       _table.connectedLandId,
-      _table.connectedPixelId
+      _table.connectedPixelId,
+      _table.chainID,
+      _table.landID
     );
 
     PackedCounter _encodedLengths;
     bytes memory _dynamicData;
 
     bytes32[] memory _keyTuple = new bytes32[](3);
-    _keyTuple[0] = chaindId;
+    _keyTuple[0] = bytes32(uint256(chainId));
     _keyTuple[1] = bytes32(uint256(landId));
     _keyTuple[2] = bytes32(uint256(pixelId));
 
@@ -466,7 +594,18 @@ library Pixel {
    */
   function decodeStatic(
     bytes memory _blob
-  ) internal pure returns (uint8 pixelColor, address contractAddress, uint8 connectedLandId, uint8 connectedPixelId) {
+  )
+    internal
+    pure
+    returns (
+      uint8 pixelColor,
+      address contractAddress,
+      uint8 connectedLandId,
+      uint8 connectedPixelId,
+      uint16 chainID,
+      uint8 landID
+    )
+  {
     pixelColor = (uint8(Bytes.slice1(_blob, 0)));
 
     contractAddress = (address(Bytes.slice20(_blob, 1)));
@@ -474,6 +613,10 @@ library Pixel {
     connectedLandId = (uint8(Bytes.slice1(_blob, 21)));
 
     connectedPixelId = (uint8(Bytes.slice1(_blob, 22)));
+
+    chainID = (uint16(Bytes.slice2(_blob, 23)));
+
+    landID = (uint8(Bytes.slice1(_blob, 25)));
   }
 
   /**
@@ -487,17 +630,22 @@ library Pixel {
     PackedCounter,
     bytes memory
   ) internal pure returns (PixelData memory _table) {
-    (_table.pixelColor, _table.contractAddress, _table.connectedLandId, _table.connectedPixelId) = decodeStatic(
-      _staticData
-    );
+    (
+      _table.pixelColor,
+      _table.contractAddress,
+      _table.connectedLandId,
+      _table.connectedPixelId,
+      _table.chainID,
+      _table.landID
+    ) = decodeStatic(_staticData);
   }
 
   /**
    * @notice Delete all data for given keys.
    */
-  function deleteRecord(bytes32 chaindId, uint8 landId, uint8 pixelId) internal {
+  function deleteRecord(uint16 chainId, uint8 landId, uint8 pixelId) internal {
     bytes32[] memory _keyTuple = new bytes32[](3);
-    _keyTuple[0] = chaindId;
+    _keyTuple[0] = bytes32(uint256(chainId));
     _keyTuple[1] = bytes32(uint256(landId));
     _keyTuple[2] = bytes32(uint256(pixelId));
 
@@ -507,9 +655,9 @@ library Pixel {
   /**
    * @notice Delete all data for given keys.
    */
-  function _deleteRecord(bytes32 chaindId, uint8 landId, uint8 pixelId) internal {
+  function _deleteRecord(uint16 chainId, uint8 landId, uint8 pixelId) internal {
     bytes32[] memory _keyTuple = new bytes32[](3);
-    _keyTuple[0] = chaindId;
+    _keyTuple[0] = bytes32(uint256(chainId));
     _keyTuple[1] = bytes32(uint256(landId));
     _keyTuple[2] = bytes32(uint256(pixelId));
 
@@ -524,9 +672,11 @@ library Pixel {
     uint8 pixelColor,
     address contractAddress,
     uint8 connectedLandId,
-    uint8 connectedPixelId
+    uint8 connectedPixelId,
+    uint16 chainID,
+    uint8 landID
   ) internal pure returns (bytes memory) {
-    return abi.encodePacked(pixelColor, contractAddress, connectedLandId, connectedPixelId);
+    return abi.encodePacked(pixelColor, contractAddress, connectedLandId, connectedPixelId, chainID, landID);
   }
 
   /**
@@ -539,9 +689,18 @@ library Pixel {
     uint8 pixelColor,
     address contractAddress,
     uint8 connectedLandId,
-    uint8 connectedPixelId
+    uint8 connectedPixelId,
+    uint16 chainID,
+    uint8 landID
   ) internal pure returns (bytes memory, PackedCounter, bytes memory) {
-    bytes memory _staticData = encodeStatic(pixelColor, contractAddress, connectedLandId, connectedPixelId);
+    bytes memory _staticData = encodeStatic(
+      pixelColor,
+      contractAddress,
+      connectedLandId,
+      connectedPixelId,
+      chainID,
+      landID
+    );
 
     PackedCounter _encodedLengths;
     bytes memory _dynamicData;
@@ -552,9 +711,9 @@ library Pixel {
   /**
    * @notice Encode keys as a bytes32 array using this table's field layout.
    */
-  function encodeKeyTuple(bytes32 chaindId, uint8 landId, uint8 pixelId) internal pure returns (bytes32[] memory) {
+  function encodeKeyTuple(uint16 chainId, uint8 landId, uint8 pixelId) internal pure returns (bytes32[] memory) {
     bytes32[] memory _keyTuple = new bytes32[](3);
-    _keyTuple[0] = chaindId;
+    _keyTuple[0] = bytes32(uint256(chainId));
     _keyTuple[1] = bytes32(uint256(landId));
     _keyTuple[2] = bytes32(uint256(pixelId));
 

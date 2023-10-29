@@ -8,7 +8,7 @@ pragma solidity >=0.8.21;
  * @dev This interface is automatically generated from the corresponding system contract. Do not edit manually.
  */
 interface IChainEntitySystem {
-  function createChainEntity(string memory chain_id, string memory chain_name, string memory chain_color) external;
+  function createChainEntity(uint16 chain_id, string memory chain_name, string memory chain_color) external;
 
-  function addLandEntity(string memory chain_id) external;
+  function addLandEntity(uint16 chain_id) external;
 }
