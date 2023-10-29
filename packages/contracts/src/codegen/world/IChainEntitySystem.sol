@@ -9,4 +9,6 @@ pragma solidity >=0.8.21;
  */
 interface IChainEntitySystem {
   function createChainEntity(string memory chain_id, string memory chain_name, string memory chain_color) external;
+
+  function addLandEntity(string memory chain_id) external;
 }

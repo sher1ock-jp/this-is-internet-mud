@@ -8,9 +8,7 @@ pragma solidity >=0.8.21;
  * @dev This interface is automatically generated from the corresponding system contract. Do not edit manually.
  */
 interface ILandEntitySystem {
-  function createLandEntity(bytes32 chain_id, bytes32 land_id, uint8 pixel_id) external;
+  function emitReserveLandEntity(bytes32 chain_id, uint8 land_id, uint8 pixel_id) external;
 
-  function emitReserveLandEntity(bytes32 chain_id, bytes32 land_id, uint8 pixel_id) external;
-
-  function emitReleaseLandEntity(bytes32 chain_id, bytes32 land_id, uint8 pixel_id) external;
+  function emitReleaseLandEntity(bytes32 chain_id, uint8 land_id) external;
 }

@@ -7,24 +7,24 @@ import {
 } from "../codegen/index.sol";
 
 contract AddressEntitySystem is System {
-    function setAddressInfo(address _address, string name, string description ) public {
+    function setAddressInfo(address contract_address, string memory name, string memory description ) public {
         AddressInfo.set(
-            _address,
+            contract_address,
             name,
             description
         );
     }
 
-    function changeAddressName(address _address, string name) public {
+    function changeAddressName(address contract_address, string memory name) public {
         AddressInfo.setName(
-            _address,
+            contract_address,
             name
         );
     }
 
-    function changeAddressDescription(address _address, string description) public {
+    function changeAddressDescription(address contract_address, string memory description) public {
         AddressInfo.setDescription(
-            _address,
+            contract_address,
             description
         );
     }

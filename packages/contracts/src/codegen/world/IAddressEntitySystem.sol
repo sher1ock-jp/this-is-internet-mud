@@ -8,9 +8,9 @@ pragma solidity >=0.8.21;
  * @dev This interface is automatically generated from the corresponding system contract. Do not edit manually.
  */
 interface IAddressEntitySystem {
-  function setAddressInfo(address _address, string name, string description) external;
+  function setAddressInfo(address contract_address, string memory name, string memory description) external;
 
-  function changeAddressName(address _address, string name) external;
+  function changeAddressName(address contract_address, string memory name) external;
 
-  function changeAddressDescription(address _address, string description) external;
+  function changeAddressDescription(address contract_address, string memory description) external;
 }

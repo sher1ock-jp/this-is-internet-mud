@@ -11,7 +11,7 @@ import {StringToBytesKey} from "./library/StringToBytesKey.sol";
 contract PixelEntitySystem is System {
     function createPixelEntity(
         bytes32 chain_id,
-        bytes32 land_id,
+        uint8 land_id,
         uint8[] memory pixel_id,
         uint8[] memory pixel_color,
         address[] memory contract_address,
@@ -34,11 +34,11 @@ contract PixelEntitySystem is System {
     // user cant change only pixel address
     function changePixelColor(
         bytes32 chain_id,
-        bytes32 land_id,
+        uint8 land_id,
         uint8 pixel_id,
         uint8 pixel_color
     ) public {
-        Pixel.setColor(
+        Pixel.setPixelColor(
             chain_id,
             land_id,
             pixel_id,

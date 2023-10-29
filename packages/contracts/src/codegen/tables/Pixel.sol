@@ -31,7 +31,7 @@ FieldLayout constant _fieldLayout = FieldLayout.wrap(
 
 struct PixelData {
   uint8 pixelColor;
-  address address;
+  address contractAddress;
   uint8 connectedLandId;
   uint8 connectedPixelId;
 }
@@ -90,7 +90,7 @@ library Pixel {
   function getFieldNames() internal pure returns (string[] memory fieldNames) {
     fieldNames = new string[](4);
     fieldNames[0] = "pixelColor";
-    fieldNames[1] = "address";
+    fieldNames[1] = "contractAddress";
     fieldNames[2] = "connectedLandId";
     fieldNames[3] = "connectedPixelId";
   }
@@ -160,9 +160,13 @@ library Pixel {
   }
 
   /**
-   * @notice Get address.
+   * @notice Get contractAddress.
    */
-  function getAddress(bytes32 chaindId, uint8 landId, uint8 pixelId) internal view returns (address address) {
+  function getContractAddress(
+    bytes32 chaindId,
+    uint8 landId,
+    uint8 pixelId
+  ) internal view returns (address contractAddress) {
     bytes32[] memory _keyTuple = new bytes32[](3);
     _keyTuple[0] = chaindId;
     _keyTuple[1] = bytes32(uint256(landId));
@@ -173,9 +177,13 @@ library Pixel {
   }
 
   /**
-   * @notice Get address.
+   * @notice Get contractAddress.
    */
-  function _getAddress(bytes32 chaindId, uint8 landId, uint8 pixelId) internal view returns (address address) {
+  function _getContractAddress(
+    bytes32 chaindId,
+    uint8 landId,
+    uint8 pixelId
+  ) internal view returns (address contractAddress) {
     bytes32[] memory _keyTuple = new bytes32[](3);
     _keyTuple[0] = chaindId;
     _keyTuple[1] = bytes32(uint256(landId));
@@ -186,27 +194,27 @@ library Pixel {
   }
 
   /**
-   * @notice Set address.
+   * @notice Set contractAddress.
    */
-  function setAddress(bytes32 chaindId, uint8 landId, uint8 pixelId, address address) internal {
+  function setContractAddress(bytes32 chaindId, uint8 landId, uint8 pixelId, address contractAddress) internal {
     bytes32[] memory _keyTuple = new bytes32[](3);
     _keyTuple[0] = chaindId;
     _keyTuple[1] = bytes32(uint256(landId));
     _keyTuple[2] = bytes32(uint256(pixelId));
 
-    StoreSwitch.setStaticField(_tableId, _keyTuple, 1, abi.encodePacked((address)), _fieldLayout);
+    StoreSwitch.setStaticField(_tableId, _keyTuple, 1, abi.encodePacked((contractAddress)), _fieldLayout);
   }
 
   /**
-   * @notice Set address.
+   * @notice Set contractAddress.
    */
-  function _setAddress(bytes32 chaindId, uint8 landId, uint8 pixelId, address address) internal {
+  function _setContractAddress(bytes32 chaindId, uint8 landId, uint8 pixelId, address contractAddress) internal {
     bytes32[] memory _keyTuple = new bytes32[](3);
     _keyTuple[0] = chaindId;
     _keyTuple[1] = bytes32(uint256(landId));
     _keyTuple[2] = bytes32(uint256(pixelId));
 
-    StoreCore.setStaticField(_tableId, _keyTuple, 1, abi.encodePacked((address)), _fieldLayout);
+    StoreCore.setStaticField(_tableId, _keyTuple, 1, abi.encodePacked((contractAddress)), _fieldLayout);
   }
 
   /**
@@ -367,11 +375,11 @@ library Pixel {
     uint8 landId,
     uint8 pixelId,
     uint8 pixelColor,
-    address address,
+    address contractAddress,
     uint8 connectedLandId,
     uint8 connectedPixelId
   ) internal {
-    bytes memory _staticData = encodeStatic(pixelColor, address, connectedLandId, connectedPixelId);
+    bytes memory _staticData = encodeStatic(pixelColor, contractAddress, connectedLandId, connectedPixelId);
 
     PackedCounter _encodedLengths;
     bytes memory _dynamicData;
@@ -392,11 +400,11 @@ library Pixel {
     uint8 landId,
     uint8 pixelId,
     uint8 pixelColor,
-    address address,
+    address contractAddress,
     uint8 connectedLandId,
     uint8 connectedPixelId
   ) internal {
-    bytes memory _staticData = encodeStatic(pixelColor, address, connectedLandId, connectedPixelId);
+    bytes memory _staticData = encodeStatic(pixelColor, contractAddress, connectedLandId, connectedPixelId);
 
     PackedCounter _encodedLengths;
     bytes memory _dynamicData;
@@ -415,7 +423,7 @@ library Pixel {
   function set(bytes32 chaindId, uint8 landId, uint8 pixelId, PixelData memory _table) internal {
     bytes memory _staticData = encodeStatic(
       _table.pixelColor,
-      _table.address,
+      _table.contractAddress,
       _table.connectedLandId,
       _table.connectedPixelId
     );
@@ -437,7 +445,7 @@ library Pixel {
   function _set(bytes32 chaindId, uint8 landId, uint8 pixelId, PixelData memory _table) internal {
     bytes memory _staticData = encodeStatic(
       _table.pixelColor,
-      _table.address,
+      _table.contractAddress,
       _table.connectedLandId,
       _table.connectedPixelId
     );
@@ -458,10 +466,10 @@ library Pixel {
    */
   function decodeStatic(
     bytes memory _blob
-  ) internal pure returns (uint8 pixelColor, address address, uint8 connectedLandId, uint8 connectedPixelId) {
+  ) internal pure returns (uint8 pixelColor, address contractAddress, uint8 connectedLandId, uint8 connectedPixelId) {
     pixelColor = (uint8(Bytes.slice1(_blob, 0)));
 
-    address = (address(Bytes.slice20(_blob, 1)));
+    contractAddress = (address(Bytes.slice20(_blob, 1)));
 
     connectedLandId = (uint8(Bytes.slice1(_blob, 21)));
 
@@ -479,7 +487,9 @@ library Pixel {
     PackedCounter,
     bytes memory
   ) internal pure returns (PixelData memory _table) {
-    (_table.pixelColor, _table.address, _table.connectedLandId, _table.connectedPixelId) = decodeStatic(_staticData);
+    (_table.pixelColor, _table.contractAddress, _table.connectedLandId, _table.connectedPixelId) = decodeStatic(
+      _staticData
+    );
   }
 
   /**
@@ -512,11 +522,11 @@ library Pixel {
    */
   function encodeStatic(
     uint8 pixelColor,
-    address address,
+    address contractAddress,
     uint8 connectedLandId,
     uint8 connectedPixelId
   ) internal pure returns (bytes memory) {
-    return abi.encodePacked(pixelColor, address, connectedLandId, connectedPixelId);
+    return abi.encodePacked(pixelColor, contractAddress, connectedLandId, connectedPixelId);
   }
 
   /**
@@ -527,11 +537,11 @@ library Pixel {
    */
   function encode(
     uint8 pixelColor,
-    address address,
+    address contractAddress,
     uint8 connectedLandId,
     uint8 connectedPixelId
   ) internal pure returns (bytes memory, PackedCounter, bytes memory) {
-    bytes memory _staticData = encodeStatic(pixelColor, address, connectedLandId, connectedPixelId);
+    bytes memory _staticData = encodeStatic(pixelColor, contractAddress, connectedLandId, connectedPixelId);
 
     PackedCounter _encodedLengths;
     bytes memory _dynamicData;

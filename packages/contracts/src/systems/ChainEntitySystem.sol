@@ -3,7 +3,7 @@ pragma solidity >=0.8.21;
 
 import { System } from "@latticexyz/world/src/System.sol";
 import {
-    Chain
+    ChainComponent
 } from "../codegen/index.sol";
 
 import { getUniqueEntity } from "@latticexyz/world-modules/src/modules/uniqueentity/getUniqueEntity.sol";
@@ -15,12 +15,25 @@ contract ChainEntitySystem is System {
         string memory chain_name,
         string memory chain_color
     ) public {
-        bytes32 chain_id = StringToBytesKey(chain_id); // cant use string as key
-        Chain.set(
-            chain_id,
-            land_id,
+        bytes32 _chain_id = StringToBytesKey(chain_id); // cant use string as key
+        uint8 initial_land_count = 1;
+        ChainComponent.set(
+            _chain_id,
+            initial_land_count,
             chain_name,
             chain_color
         );
     }
+
+    function addLandEntity(
+        string memory chain_id
+    ) public {
+        bytes32 _chain_id = StringToBytesKey(chain_id); // cant use string as key
+        uint8 land_count = ChainComponent.getLandCount(_chain_id) + 1;
+        ChainComponent.setLandCount(
+            _chain_id,
+            land_count
+        );
+    }
+
 }

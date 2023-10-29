@@ -66,7 +66,7 @@ library AddressBoard {
    */
   function getKeyNames() internal pure returns (string[] memory keyNames) {
     keyNames = new string[](1);
-    keyNames[0] = "address";
+    keyNames[0] = "contractAddress";
   }
 
   /**
@@ -95,9 +95,9 @@ library AddressBoard {
   /**
    * @notice Get chat.
    */
-  function getChat(address address) internal view returns (bytes32 chat) {
+  function getChat(address contractAddress) internal view returns (bytes32 chat) {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = bytes32(uint256(uint160(address)));
+    _keyTuple[0] = bytes32(uint256(uint160(contractAddress)));
 
     bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 0, _fieldLayout);
     return (bytes32(_blob));
@@ -106,9 +106,9 @@ library AddressBoard {
   /**
    * @notice Get chat.
    */
-  function _getChat(address address) internal view returns (bytes32 chat) {
+  function _getChat(address contractAddress) internal view returns (bytes32 chat) {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = bytes32(uint256(uint160(address)));
+    _keyTuple[0] = bytes32(uint256(uint160(contractAddress)));
 
     bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 0, _fieldLayout);
     return (bytes32(_blob));
@@ -117,9 +117,9 @@ library AddressBoard {
   /**
    * @notice Get chat.
    */
-  function get(address address) internal view returns (bytes32 chat) {
+  function get(address contractAddress) internal view returns (bytes32 chat) {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = bytes32(uint256(uint160(address)));
+    _keyTuple[0] = bytes32(uint256(uint160(contractAddress)));
 
     bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 0, _fieldLayout);
     return (bytes32(_blob));
@@ -128,9 +128,9 @@ library AddressBoard {
   /**
    * @notice Get chat.
    */
-  function _get(address address) internal view returns (bytes32 chat) {
+  function _get(address contractAddress) internal view returns (bytes32 chat) {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = bytes32(uint256(uint160(address)));
+    _keyTuple[0] = bytes32(uint256(uint160(contractAddress)));
 
     bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 0, _fieldLayout);
     return (bytes32(_blob));
@@ -139,9 +139,9 @@ library AddressBoard {
   /**
    * @notice Set chat.
    */
-  function setChat(address address, bytes32 chat) internal {
+  function setChat(address contractAddress, bytes32 chat) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = bytes32(uint256(uint160(address)));
+    _keyTuple[0] = bytes32(uint256(uint160(contractAddress)));
 
     StoreSwitch.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked((chat)), _fieldLayout);
   }
@@ -149,9 +149,9 @@ library AddressBoard {
   /**
    * @notice Set chat.
    */
-  function _setChat(address address, bytes32 chat) internal {
+  function _setChat(address contractAddress, bytes32 chat) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = bytes32(uint256(uint160(address)));
+    _keyTuple[0] = bytes32(uint256(uint160(contractAddress)));
 
     StoreCore.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked((chat)), _fieldLayout);
   }
@@ -159,9 +159,9 @@ library AddressBoard {
   /**
    * @notice Set chat.
    */
-  function set(address address, bytes32 chat) internal {
+  function set(address contractAddress, bytes32 chat) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = bytes32(uint256(uint160(address)));
+    _keyTuple[0] = bytes32(uint256(uint160(contractAddress)));
 
     StoreSwitch.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked((chat)), _fieldLayout);
   }
@@ -169,9 +169,9 @@ library AddressBoard {
   /**
    * @notice Set chat.
    */
-  function _set(address address, bytes32 chat) internal {
+  function _set(address contractAddress, bytes32 chat) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = bytes32(uint256(uint160(address)));
+    _keyTuple[0] = bytes32(uint256(uint160(contractAddress)));
 
     StoreCore.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked((chat)), _fieldLayout);
   }
@@ -179,9 +179,9 @@ library AddressBoard {
   /**
    * @notice Delete all data for given keys.
    */
-  function deleteRecord(address address) internal {
+  function deleteRecord(address contractAddress) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = bytes32(uint256(uint160(address)));
+    _keyTuple[0] = bytes32(uint256(uint160(contractAddress)));
 
     StoreSwitch.deleteRecord(_tableId, _keyTuple);
   }
@@ -189,9 +189,9 @@ library AddressBoard {
   /**
    * @notice Delete all data for given keys.
    */
-  function _deleteRecord(address address) internal {
+  function _deleteRecord(address contractAddress) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = bytes32(uint256(uint160(address)));
+    _keyTuple[0] = bytes32(uint256(uint160(contractAddress)));
 
     StoreCore.deleteRecord(_tableId, _keyTuple, _fieldLayout);
   }
@@ -222,9 +222,9 @@ library AddressBoard {
   /**
    * @notice Encode keys as a bytes32 array using this table's field layout.
    */
-  function encodeKeyTuple(address address) internal pure returns (bytes32[] memory) {
+  function encodeKeyTuple(address contractAddress) internal pure returns (bytes32[] memory) {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = bytes32(uint256(uint160(address)));
+    _keyTuple[0] = bytes32(uint256(uint160(contractAddress)));
 
     return _keyTuple;
   }

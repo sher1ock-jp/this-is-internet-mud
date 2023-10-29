@@ -72,7 +72,7 @@ library AddressInfo {
    */
   function getKeyNames() internal pure returns (string[] memory keyNames) {
     keyNames = new string[](1);
-    keyNames[0] = "address";
+    keyNames[0] = "contractAddress";
   }
 
   /**
@@ -102,9 +102,9 @@ library AddressInfo {
   /**
    * @notice Get name.
    */
-  function getName(address address) internal view returns (string memory name) {
+  function getName(address contractAddress) internal view returns (string memory name) {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = bytes32(uint256(uint160(address)));
+    _keyTuple[0] = bytes32(uint256(uint160(contractAddress)));
 
     bytes memory _blob = StoreSwitch.getDynamicField(_tableId, _keyTuple, 0);
     return (string(_blob));
@@ -113,9 +113,9 @@ library AddressInfo {
   /**
    * @notice Get name.
    */
-  function _getName(address address) internal view returns (string memory name) {
+  function _getName(address contractAddress) internal view returns (string memory name) {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = bytes32(uint256(uint160(address)));
+    _keyTuple[0] = bytes32(uint256(uint160(contractAddress)));
 
     bytes memory _blob = StoreCore.getDynamicField(_tableId, _keyTuple, 0);
     return (string(_blob));
@@ -124,9 +124,9 @@ library AddressInfo {
   /**
    * @notice Set name.
    */
-  function setName(address address, string memory name) internal {
+  function setName(address contractAddress, string memory name) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = bytes32(uint256(uint160(address)));
+    _keyTuple[0] = bytes32(uint256(uint160(contractAddress)));
 
     StoreSwitch.setDynamicField(_tableId, _keyTuple, 0, bytes((name)));
   }
@@ -134,9 +134,9 @@ library AddressInfo {
   /**
    * @notice Set name.
    */
-  function _setName(address address, string memory name) internal {
+  function _setName(address contractAddress, string memory name) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = bytes32(uint256(uint160(address)));
+    _keyTuple[0] = bytes32(uint256(uint160(contractAddress)));
 
     StoreCore.setDynamicField(_tableId, _keyTuple, 0, bytes((name)));
   }
@@ -144,9 +144,9 @@ library AddressInfo {
   /**
    * @notice Get the length of name.
    */
-  function lengthName(address address) internal view returns (uint256) {
+  function lengthName(address contractAddress) internal view returns (uint256) {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = bytes32(uint256(uint160(address)));
+    _keyTuple[0] = bytes32(uint256(uint160(contractAddress)));
 
     uint256 _byteLength = StoreSwitch.getDynamicFieldLength(_tableId, _keyTuple, 0);
     unchecked {
@@ -157,9 +157,9 @@ library AddressInfo {
   /**
    * @notice Get the length of name.
    */
-  function _lengthName(address address) internal view returns (uint256) {
+  function _lengthName(address contractAddress) internal view returns (uint256) {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = bytes32(uint256(uint160(address)));
+    _keyTuple[0] = bytes32(uint256(uint160(contractAddress)));
 
     uint256 _byteLength = StoreCore.getDynamicFieldLength(_tableId, _keyTuple, 0);
     unchecked {
@@ -171,9 +171,9 @@ library AddressInfo {
    * @notice Get an item of name.
    * @dev Reverts with Store_IndexOutOfBounds if `_index` is out of bounds for the array.
    */
-  function getItemName(address address, uint256 _index) internal view returns (string memory) {
+  function getItemName(address contractAddress, uint256 _index) internal view returns (string memory) {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = bytes32(uint256(uint160(address)));
+    _keyTuple[0] = bytes32(uint256(uint160(contractAddress)));
 
     unchecked {
       bytes memory _blob = StoreSwitch.getDynamicFieldSlice(_tableId, _keyTuple, 0, _index * 1, (_index + 1) * 1);
@@ -185,9 +185,9 @@ library AddressInfo {
    * @notice Get an item of name.
    * @dev Reverts with Store_IndexOutOfBounds if `_index` is out of bounds for the array.
    */
-  function _getItemName(address address, uint256 _index) internal view returns (string memory) {
+  function _getItemName(address contractAddress, uint256 _index) internal view returns (string memory) {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = bytes32(uint256(uint160(address)));
+    _keyTuple[0] = bytes32(uint256(uint160(contractAddress)));
 
     unchecked {
       bytes memory _blob = StoreCore.getDynamicFieldSlice(_tableId, _keyTuple, 0, _index * 1, (_index + 1) * 1);
@@ -198,9 +198,9 @@ library AddressInfo {
   /**
    * @notice Push a slice to name.
    */
-  function pushName(address address, string memory _slice) internal {
+  function pushName(address contractAddress, string memory _slice) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = bytes32(uint256(uint160(address)));
+    _keyTuple[0] = bytes32(uint256(uint160(contractAddress)));
 
     StoreSwitch.pushToDynamicField(_tableId, _keyTuple, 0, bytes((_slice)));
   }
@@ -208,9 +208,9 @@ library AddressInfo {
   /**
    * @notice Push a slice to name.
    */
-  function _pushName(address address, string memory _slice) internal {
+  function _pushName(address contractAddress, string memory _slice) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = bytes32(uint256(uint160(address)));
+    _keyTuple[0] = bytes32(uint256(uint160(contractAddress)));
 
     StoreCore.pushToDynamicField(_tableId, _keyTuple, 0, bytes((_slice)));
   }
@@ -218,9 +218,9 @@ library AddressInfo {
   /**
    * @notice Pop a slice from name.
    */
-  function popName(address address) internal {
+  function popName(address contractAddress) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = bytes32(uint256(uint160(address)));
+    _keyTuple[0] = bytes32(uint256(uint160(contractAddress)));
 
     StoreSwitch.popFromDynamicField(_tableId, _keyTuple, 0, 1);
   }
@@ -228,9 +228,9 @@ library AddressInfo {
   /**
    * @notice Pop a slice from name.
    */
-  function _popName(address address) internal {
+  function _popName(address contractAddress) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = bytes32(uint256(uint160(address)));
+    _keyTuple[0] = bytes32(uint256(uint160(contractAddress)));
 
     StoreCore.popFromDynamicField(_tableId, _keyTuple, 0, 1);
   }
@@ -238,9 +238,9 @@ library AddressInfo {
   /**
    * @notice Update a slice of name at `_index`.
    */
-  function updateName(address address, uint256 _index, string memory _slice) internal {
+  function updateName(address contractAddress, uint256 _index, string memory _slice) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = bytes32(uint256(uint160(address)));
+    _keyTuple[0] = bytes32(uint256(uint160(contractAddress)));
 
     unchecked {
       bytes memory _encoded = bytes((_slice));
@@ -251,9 +251,9 @@ library AddressInfo {
   /**
    * @notice Update a slice of name at `_index`.
    */
-  function _updateName(address address, uint256 _index, string memory _slice) internal {
+  function _updateName(address contractAddress, uint256 _index, string memory _slice) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = bytes32(uint256(uint160(address)));
+    _keyTuple[0] = bytes32(uint256(uint160(contractAddress)));
 
     unchecked {
       bytes memory _encoded = bytes((_slice));
@@ -264,9 +264,9 @@ library AddressInfo {
   /**
    * @notice Get description.
    */
-  function getDescription(address address) internal view returns (string memory description) {
+  function getDescription(address contractAddress) internal view returns (string memory description) {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = bytes32(uint256(uint160(address)));
+    _keyTuple[0] = bytes32(uint256(uint160(contractAddress)));
 
     bytes memory _blob = StoreSwitch.getDynamicField(_tableId, _keyTuple, 1);
     return (string(_blob));
@@ -275,9 +275,9 @@ library AddressInfo {
   /**
    * @notice Get description.
    */
-  function _getDescription(address address) internal view returns (string memory description) {
+  function _getDescription(address contractAddress) internal view returns (string memory description) {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = bytes32(uint256(uint160(address)));
+    _keyTuple[0] = bytes32(uint256(uint160(contractAddress)));
 
     bytes memory _blob = StoreCore.getDynamicField(_tableId, _keyTuple, 1);
     return (string(_blob));
@@ -286,9 +286,9 @@ library AddressInfo {
   /**
    * @notice Set description.
    */
-  function setDescription(address address, string memory description) internal {
+  function setDescription(address contractAddress, string memory description) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = bytes32(uint256(uint160(address)));
+    _keyTuple[0] = bytes32(uint256(uint160(contractAddress)));
 
     StoreSwitch.setDynamicField(_tableId, _keyTuple, 1, bytes((description)));
   }
@@ -296,9 +296,9 @@ library AddressInfo {
   /**
    * @notice Set description.
    */
-  function _setDescription(address address, string memory description) internal {
+  function _setDescription(address contractAddress, string memory description) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = bytes32(uint256(uint160(address)));
+    _keyTuple[0] = bytes32(uint256(uint160(contractAddress)));
 
     StoreCore.setDynamicField(_tableId, _keyTuple, 1, bytes((description)));
   }
@@ -306,9 +306,9 @@ library AddressInfo {
   /**
    * @notice Get the length of description.
    */
-  function lengthDescription(address address) internal view returns (uint256) {
+  function lengthDescription(address contractAddress) internal view returns (uint256) {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = bytes32(uint256(uint160(address)));
+    _keyTuple[0] = bytes32(uint256(uint160(contractAddress)));
 
     uint256 _byteLength = StoreSwitch.getDynamicFieldLength(_tableId, _keyTuple, 1);
     unchecked {
@@ -319,9 +319,9 @@ library AddressInfo {
   /**
    * @notice Get the length of description.
    */
-  function _lengthDescription(address address) internal view returns (uint256) {
+  function _lengthDescription(address contractAddress) internal view returns (uint256) {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = bytes32(uint256(uint160(address)));
+    _keyTuple[0] = bytes32(uint256(uint160(contractAddress)));
 
     uint256 _byteLength = StoreCore.getDynamicFieldLength(_tableId, _keyTuple, 1);
     unchecked {
@@ -333,9 +333,9 @@ library AddressInfo {
    * @notice Get an item of description.
    * @dev Reverts with Store_IndexOutOfBounds if `_index` is out of bounds for the array.
    */
-  function getItemDescription(address address, uint256 _index) internal view returns (string memory) {
+  function getItemDescription(address contractAddress, uint256 _index) internal view returns (string memory) {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = bytes32(uint256(uint160(address)));
+    _keyTuple[0] = bytes32(uint256(uint160(contractAddress)));
 
     unchecked {
       bytes memory _blob = StoreSwitch.getDynamicFieldSlice(_tableId, _keyTuple, 1, _index * 1, (_index + 1) * 1);
@@ -347,9 +347,9 @@ library AddressInfo {
    * @notice Get an item of description.
    * @dev Reverts with Store_IndexOutOfBounds if `_index` is out of bounds for the array.
    */
-  function _getItemDescription(address address, uint256 _index) internal view returns (string memory) {
+  function _getItemDescription(address contractAddress, uint256 _index) internal view returns (string memory) {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = bytes32(uint256(uint160(address)));
+    _keyTuple[0] = bytes32(uint256(uint160(contractAddress)));
 
     unchecked {
       bytes memory _blob = StoreCore.getDynamicFieldSlice(_tableId, _keyTuple, 1, _index * 1, (_index + 1) * 1);
@@ -360,9 +360,9 @@ library AddressInfo {
   /**
    * @notice Push a slice to description.
    */
-  function pushDescription(address address, string memory _slice) internal {
+  function pushDescription(address contractAddress, string memory _slice) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = bytes32(uint256(uint160(address)));
+    _keyTuple[0] = bytes32(uint256(uint160(contractAddress)));
 
     StoreSwitch.pushToDynamicField(_tableId, _keyTuple, 1, bytes((_slice)));
   }
@@ -370,9 +370,9 @@ library AddressInfo {
   /**
    * @notice Push a slice to description.
    */
-  function _pushDescription(address address, string memory _slice) internal {
+  function _pushDescription(address contractAddress, string memory _slice) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = bytes32(uint256(uint160(address)));
+    _keyTuple[0] = bytes32(uint256(uint160(contractAddress)));
 
     StoreCore.pushToDynamicField(_tableId, _keyTuple, 1, bytes((_slice)));
   }
@@ -380,9 +380,9 @@ library AddressInfo {
   /**
    * @notice Pop a slice from description.
    */
-  function popDescription(address address) internal {
+  function popDescription(address contractAddress) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = bytes32(uint256(uint160(address)));
+    _keyTuple[0] = bytes32(uint256(uint160(contractAddress)));
 
     StoreSwitch.popFromDynamicField(_tableId, _keyTuple, 1, 1);
   }
@@ -390,9 +390,9 @@ library AddressInfo {
   /**
    * @notice Pop a slice from description.
    */
-  function _popDescription(address address) internal {
+  function _popDescription(address contractAddress) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = bytes32(uint256(uint160(address)));
+    _keyTuple[0] = bytes32(uint256(uint160(contractAddress)));
 
     StoreCore.popFromDynamicField(_tableId, _keyTuple, 1, 1);
   }
@@ -400,9 +400,9 @@ library AddressInfo {
   /**
    * @notice Update a slice of description at `_index`.
    */
-  function updateDescription(address address, uint256 _index, string memory _slice) internal {
+  function updateDescription(address contractAddress, uint256 _index, string memory _slice) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = bytes32(uint256(uint160(address)));
+    _keyTuple[0] = bytes32(uint256(uint160(contractAddress)));
 
     unchecked {
       bytes memory _encoded = bytes((_slice));
@@ -413,9 +413,9 @@ library AddressInfo {
   /**
    * @notice Update a slice of description at `_index`.
    */
-  function _updateDescription(address address, uint256 _index, string memory _slice) internal {
+  function _updateDescription(address contractAddress, uint256 _index, string memory _slice) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = bytes32(uint256(uint160(address)));
+    _keyTuple[0] = bytes32(uint256(uint160(contractAddress)));
 
     unchecked {
       bytes memory _encoded = bytes((_slice));
@@ -426,9 +426,9 @@ library AddressInfo {
   /**
    * @notice Get the full data.
    */
-  function get(address address) internal view returns (AddressInfoData memory _table) {
+  function get(address contractAddress) internal view returns (AddressInfoData memory _table) {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = bytes32(uint256(uint160(address)));
+    _keyTuple[0] = bytes32(uint256(uint160(contractAddress)));
 
     (bytes memory _staticData, PackedCounter _encodedLengths, bytes memory _dynamicData) = StoreSwitch.getRecord(
       _tableId,
@@ -441,9 +441,9 @@ library AddressInfo {
   /**
    * @notice Get the full data.
    */
-  function _get(address address) internal view returns (AddressInfoData memory _table) {
+  function _get(address contractAddress) internal view returns (AddressInfoData memory _table) {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = bytes32(uint256(uint160(address)));
+    _keyTuple[0] = bytes32(uint256(uint160(contractAddress)));
 
     (bytes memory _staticData, PackedCounter _encodedLengths, bytes memory _dynamicData) = StoreCore.getRecord(
       _tableId,
@@ -456,13 +456,13 @@ library AddressInfo {
   /**
    * @notice Set the full data using individual values.
    */
-  function set(address address, string memory name, string memory description) internal {
+  function set(address contractAddress, string memory name, string memory description) internal {
     bytes memory _staticData;
     PackedCounter _encodedLengths = encodeLengths(name, description);
     bytes memory _dynamicData = encodeDynamic(name, description);
 
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = bytes32(uint256(uint160(address)));
+    _keyTuple[0] = bytes32(uint256(uint160(contractAddress)));
 
     StoreSwitch.setRecord(_tableId, _keyTuple, _staticData, _encodedLengths, _dynamicData);
   }
@@ -470,13 +470,13 @@ library AddressInfo {
   /**
    * @notice Set the full data using individual values.
    */
-  function _set(address address, string memory name, string memory description) internal {
+  function _set(address contractAddress, string memory name, string memory description) internal {
     bytes memory _staticData;
     PackedCounter _encodedLengths = encodeLengths(name, description);
     bytes memory _dynamicData = encodeDynamic(name, description);
 
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = bytes32(uint256(uint160(address)));
+    _keyTuple[0] = bytes32(uint256(uint160(contractAddress)));
 
     StoreCore.setRecord(_tableId, _keyTuple, _staticData, _encodedLengths, _dynamicData, _fieldLayout);
   }
@@ -484,13 +484,13 @@ library AddressInfo {
   /**
    * @notice Set the full data using the data struct.
    */
-  function set(address address, AddressInfoData memory _table) internal {
+  function set(address contractAddress, AddressInfoData memory _table) internal {
     bytes memory _staticData;
     PackedCounter _encodedLengths = encodeLengths(_table.name, _table.description);
     bytes memory _dynamicData = encodeDynamic(_table.name, _table.description);
 
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = bytes32(uint256(uint160(address)));
+    _keyTuple[0] = bytes32(uint256(uint160(contractAddress)));
 
     StoreSwitch.setRecord(_tableId, _keyTuple, _staticData, _encodedLengths, _dynamicData);
   }
@@ -498,13 +498,13 @@ library AddressInfo {
   /**
    * @notice Set the full data using the data struct.
    */
-  function _set(address address, AddressInfoData memory _table) internal {
+  function _set(address contractAddress, AddressInfoData memory _table) internal {
     bytes memory _staticData;
     PackedCounter _encodedLengths = encodeLengths(_table.name, _table.description);
     bytes memory _dynamicData = encodeDynamic(_table.name, _table.description);
 
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = bytes32(uint256(uint160(address)));
+    _keyTuple[0] = bytes32(uint256(uint160(contractAddress)));
 
     StoreCore.setRecord(_tableId, _keyTuple, _staticData, _encodedLengths, _dynamicData, _fieldLayout);
   }
@@ -547,9 +547,9 @@ library AddressInfo {
   /**
    * @notice Delete all data for given keys.
    */
-  function deleteRecord(address address) internal {
+  function deleteRecord(address contractAddress) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = bytes32(uint256(uint160(address)));
+    _keyTuple[0] = bytes32(uint256(uint160(contractAddress)));
 
     StoreSwitch.deleteRecord(_tableId, _keyTuple);
   }
@@ -557,9 +557,9 @@ library AddressInfo {
   /**
    * @notice Delete all data for given keys.
    */
-  function _deleteRecord(address address) internal {
+  function _deleteRecord(address contractAddress) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = bytes32(uint256(uint160(address)));
+    _keyTuple[0] = bytes32(uint256(uint160(contractAddress)));
 
     StoreCore.deleteRecord(_tableId, _keyTuple, _fieldLayout);
   }
@@ -606,9 +606,9 @@ library AddressInfo {
   /**
    * @notice Encode keys as a bytes32 array using this table's field layout.
    */
-  function encodeKeyTuple(address address) internal pure returns (bytes32[] memory) {
+  function encodeKeyTuple(address contractAddress) internal pure returns (bytes32[] memory) {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = bytes32(uint256(uint160(address)));
+    _keyTuple[0] = bytes32(uint256(uint160(contractAddress)));
 
     return _keyTuple;
   }

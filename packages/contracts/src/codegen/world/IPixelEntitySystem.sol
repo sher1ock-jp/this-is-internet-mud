@@ -10,7 +10,7 @@ pragma solidity >=0.8.21;
 interface IPixelEntitySystem {
   function createPixelEntity(
     bytes32 chain_id,
-    bytes32 land_id,
+    uint8 land_id,
     uint8[] memory pixel_id,
     uint8[] memory pixel_color,
     address[] memory contract_address,
@@ -18,5 +18,5 @@ interface IPixelEntitySystem {
     uint8[] memory connected_pixel_id
   ) external;
 
-  function changePixelColor(bytes32 chain_id, bytes32 land_id, uint8 pixel_id, uint8 pixel_color) external;
+  function changePixelColor(bytes32 chain_id, uint8 land_id, uint8 pixel_id, uint8 pixel_color) external;
 }

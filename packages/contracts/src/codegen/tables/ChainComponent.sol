@@ -21,21 +21,21 @@ import { ResourceId } from "@latticexyz/store/src/ResourceId.sol";
 import { RESOURCE_TABLE, RESOURCE_OFFCHAIN_TABLE } from "@latticexyz/store/src/storeResourceTypes.sol";
 
 ResourceId constant _tableId = ResourceId.wrap(
-  bytes32(abi.encodePacked(RESOURCE_TABLE, bytes14(""), bytes16("Chain")))
+  bytes32(abi.encodePacked(RESOURCE_TABLE, bytes14(""), bytes16("ChainComponent")))
 );
-ResourceId constant ChainTableId = _tableId;
+ResourceId constant ChainComponentTableId = _tableId;
 
 FieldLayout constant _fieldLayout = FieldLayout.wrap(
-  0x0000000300000000000000000000000000000000000000000000000000000000
+  0x0001010201000000000000000000000000000000000000000000000000000000
 );
 
-struct ChainData {
-  uint8[] landId;
+struct ChainComponentData {
+  uint8 landCount;
   string chainName;
   string chainColor;
 }
 
-library Chain {
+library ChainComponent {
   /**
    * @notice Get the table values' field layout.
    * @return _fieldLayout The field layout for the table.
@@ -61,7 +61,7 @@ library Chain {
    */
   function getValueSchema() internal pure returns (Schema) {
     SchemaType[] memory _valueSchema = new SchemaType[](3);
-    _valueSchema[0] = SchemaType.UINT8_ARRAY;
+    _valueSchema[0] = SchemaType.UINT8;
     _valueSchema[1] = SchemaType.STRING;
     _valueSchema[2] = SchemaType.STRING;
 
@@ -83,7 +83,7 @@ library Chain {
    */
   function getFieldNames() internal pure returns (string[] memory fieldNames) {
     fieldNames = new string[](3);
-    fieldNames[0] = "landId";
+    fieldNames[0] = "landCount";
     fieldNames[1] = "chainName";
     fieldNames[2] = "chainColor";
   }
@@ -103,165 +103,45 @@ library Chain {
   }
 
   /**
-   * @notice Get landId.
+   * @notice Get landCount.
    */
-  function getLandId(bytes32 chainId) internal view returns (uint8[] memory landId) {
+  function getLandCount(bytes32 chainId) internal view returns (uint8 landCount) {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = chainId;
 
-    bytes memory _blob = StoreSwitch.getDynamicField(_tableId, _keyTuple, 0);
-    return (SliceLib.getSubslice(_blob, 0, _blob.length).decodeArray_uint8());
+    bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 0, _fieldLayout);
+    return (uint8(bytes1(_blob)));
   }
 
   /**
-   * @notice Get landId.
+   * @notice Get landCount.
    */
-  function _getLandId(bytes32 chainId) internal view returns (uint8[] memory landId) {
+  function _getLandCount(bytes32 chainId) internal view returns (uint8 landCount) {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = chainId;
 
-    bytes memory _blob = StoreCore.getDynamicField(_tableId, _keyTuple, 0);
-    return (SliceLib.getSubslice(_blob, 0, _blob.length).decodeArray_uint8());
+    bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 0, _fieldLayout);
+    return (uint8(bytes1(_blob)));
   }
 
   /**
-   * @notice Set landId.
+   * @notice Set landCount.
    */
-  function setLandId(bytes32 chainId, uint8[] memory landId) internal {
+  function setLandCount(bytes32 chainId, uint8 landCount) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = chainId;
 
-    StoreSwitch.setDynamicField(_tableId, _keyTuple, 0, EncodeArray.encode((landId)));
+    StoreSwitch.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked((landCount)), _fieldLayout);
   }
 
   /**
-   * @notice Set landId.
+   * @notice Set landCount.
    */
-  function _setLandId(bytes32 chainId, uint8[] memory landId) internal {
+  function _setLandCount(bytes32 chainId, uint8 landCount) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = chainId;
 
-    StoreCore.setDynamicField(_tableId, _keyTuple, 0, EncodeArray.encode((landId)));
-  }
-
-  /**
-   * @notice Get the length of landId.
-   */
-  function lengthLandId(bytes32 chainId) internal view returns (uint256) {
-    bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = chainId;
-
-    uint256 _byteLength = StoreSwitch.getDynamicFieldLength(_tableId, _keyTuple, 0);
-    unchecked {
-      return _byteLength / 1;
-    }
-  }
-
-  /**
-   * @notice Get the length of landId.
-   */
-  function _lengthLandId(bytes32 chainId) internal view returns (uint256) {
-    bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = chainId;
-
-    uint256 _byteLength = StoreCore.getDynamicFieldLength(_tableId, _keyTuple, 0);
-    unchecked {
-      return _byteLength / 1;
-    }
-  }
-
-  /**
-   * @notice Get an item of landId.
-   * @dev Reverts with Store_IndexOutOfBounds if `_index` is out of bounds for the array.
-   */
-  function getItemLandId(bytes32 chainId, uint256 _index) internal view returns (uint8) {
-    bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = chainId;
-
-    unchecked {
-      bytes memory _blob = StoreSwitch.getDynamicFieldSlice(_tableId, _keyTuple, 0, _index * 1, (_index + 1) * 1);
-      return (uint8(bytes1(_blob)));
-    }
-  }
-
-  /**
-   * @notice Get an item of landId.
-   * @dev Reverts with Store_IndexOutOfBounds if `_index` is out of bounds for the array.
-   */
-  function _getItemLandId(bytes32 chainId, uint256 _index) internal view returns (uint8) {
-    bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = chainId;
-
-    unchecked {
-      bytes memory _blob = StoreCore.getDynamicFieldSlice(_tableId, _keyTuple, 0, _index * 1, (_index + 1) * 1);
-      return (uint8(bytes1(_blob)));
-    }
-  }
-
-  /**
-   * @notice Push an element to landId.
-   */
-  function pushLandId(bytes32 chainId, uint8 _element) internal {
-    bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = chainId;
-
-    StoreSwitch.pushToDynamicField(_tableId, _keyTuple, 0, abi.encodePacked((_element)));
-  }
-
-  /**
-   * @notice Push an element to landId.
-   */
-  function _pushLandId(bytes32 chainId, uint8 _element) internal {
-    bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = chainId;
-
-    StoreCore.pushToDynamicField(_tableId, _keyTuple, 0, abi.encodePacked((_element)));
-  }
-
-  /**
-   * @notice Pop an element from landId.
-   */
-  function popLandId(bytes32 chainId) internal {
-    bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = chainId;
-
-    StoreSwitch.popFromDynamicField(_tableId, _keyTuple, 0, 1);
-  }
-
-  /**
-   * @notice Pop an element from landId.
-   */
-  function _popLandId(bytes32 chainId) internal {
-    bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = chainId;
-
-    StoreCore.popFromDynamicField(_tableId, _keyTuple, 0, 1);
-  }
-
-  /**
-   * @notice Update an element of landId at `_index`.
-   */
-  function updateLandId(bytes32 chainId, uint256 _index, uint8 _element) internal {
-    bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = chainId;
-
-    unchecked {
-      bytes memory _encoded = abi.encodePacked((_element));
-      StoreSwitch.spliceDynamicData(_tableId, _keyTuple, 0, uint40(_index * 1), uint40(_encoded.length), _encoded);
-    }
-  }
-
-  /**
-   * @notice Update an element of landId at `_index`.
-   */
-  function _updateLandId(bytes32 chainId, uint256 _index, uint8 _element) internal {
-    bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = chainId;
-
-    unchecked {
-      bytes memory _encoded = abi.encodePacked((_element));
-      StoreCore.spliceDynamicData(_tableId, _keyTuple, 0, uint40(_index * 1), uint40(_encoded.length), _encoded);
-    }
+    StoreCore.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked((landCount)), _fieldLayout);
   }
 
   /**
@@ -271,7 +151,7 @@ library Chain {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = chainId;
 
-    bytes memory _blob = StoreSwitch.getDynamicField(_tableId, _keyTuple, 1);
+    bytes memory _blob = StoreSwitch.getDynamicField(_tableId, _keyTuple, 0);
     return (string(_blob));
   }
 
@@ -282,7 +162,7 @@ library Chain {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = chainId;
 
-    bytes memory _blob = StoreCore.getDynamicField(_tableId, _keyTuple, 1);
+    bytes memory _blob = StoreCore.getDynamicField(_tableId, _keyTuple, 0);
     return (string(_blob));
   }
 
@@ -293,7 +173,7 @@ library Chain {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = chainId;
 
-    StoreSwitch.setDynamicField(_tableId, _keyTuple, 1, bytes((chainName)));
+    StoreSwitch.setDynamicField(_tableId, _keyTuple, 0, bytes((chainName)));
   }
 
   /**
@@ -303,7 +183,7 @@ library Chain {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = chainId;
 
-    StoreCore.setDynamicField(_tableId, _keyTuple, 1, bytes((chainName)));
+    StoreCore.setDynamicField(_tableId, _keyTuple, 0, bytes((chainName)));
   }
 
   /**
@@ -313,7 +193,7 @@ library Chain {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = chainId;
 
-    uint256 _byteLength = StoreSwitch.getDynamicFieldLength(_tableId, _keyTuple, 1);
+    uint256 _byteLength = StoreSwitch.getDynamicFieldLength(_tableId, _keyTuple, 0);
     unchecked {
       return _byteLength / 1;
     }
@@ -326,7 +206,7 @@ library Chain {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = chainId;
 
-    uint256 _byteLength = StoreCore.getDynamicFieldLength(_tableId, _keyTuple, 1);
+    uint256 _byteLength = StoreCore.getDynamicFieldLength(_tableId, _keyTuple, 0);
     unchecked {
       return _byteLength / 1;
     }
@@ -341,7 +221,7 @@ library Chain {
     _keyTuple[0] = chainId;
 
     unchecked {
-      bytes memory _blob = StoreSwitch.getDynamicFieldSlice(_tableId, _keyTuple, 1, _index * 1, (_index + 1) * 1);
+      bytes memory _blob = StoreSwitch.getDynamicFieldSlice(_tableId, _keyTuple, 0, _index * 1, (_index + 1) * 1);
       return (string(_blob));
     }
   }
@@ -355,7 +235,7 @@ library Chain {
     _keyTuple[0] = chainId;
 
     unchecked {
-      bytes memory _blob = StoreCore.getDynamicFieldSlice(_tableId, _keyTuple, 1, _index * 1, (_index + 1) * 1);
+      bytes memory _blob = StoreCore.getDynamicFieldSlice(_tableId, _keyTuple, 0, _index * 1, (_index + 1) * 1);
       return (string(_blob));
     }
   }
@@ -367,7 +247,7 @@ library Chain {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = chainId;
 
-    StoreSwitch.pushToDynamicField(_tableId, _keyTuple, 1, bytes((_slice)));
+    StoreSwitch.pushToDynamicField(_tableId, _keyTuple, 0, bytes((_slice)));
   }
 
   /**
@@ -377,7 +257,7 @@ library Chain {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = chainId;
 
-    StoreCore.pushToDynamicField(_tableId, _keyTuple, 1, bytes((_slice)));
+    StoreCore.pushToDynamicField(_tableId, _keyTuple, 0, bytes((_slice)));
   }
 
   /**
@@ -387,7 +267,7 @@ library Chain {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = chainId;
 
-    StoreSwitch.popFromDynamicField(_tableId, _keyTuple, 1, 1);
+    StoreSwitch.popFromDynamicField(_tableId, _keyTuple, 0, 1);
   }
 
   /**
@@ -397,7 +277,7 @@ library Chain {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = chainId;
 
-    StoreCore.popFromDynamicField(_tableId, _keyTuple, 1, 1);
+    StoreCore.popFromDynamicField(_tableId, _keyTuple, 0, 1);
   }
 
   /**
@@ -409,7 +289,7 @@ library Chain {
 
     unchecked {
       bytes memory _encoded = bytes((_slice));
-      StoreSwitch.spliceDynamicData(_tableId, _keyTuple, 1, uint40(_index * 1), uint40(_encoded.length), _encoded);
+      StoreSwitch.spliceDynamicData(_tableId, _keyTuple, 0, uint40(_index * 1), uint40(_encoded.length), _encoded);
     }
   }
 
@@ -422,7 +302,7 @@ library Chain {
 
     unchecked {
       bytes memory _encoded = bytes((_slice));
-      StoreCore.spliceDynamicData(_tableId, _keyTuple, 1, uint40(_index * 1), uint40(_encoded.length), _encoded);
+      StoreCore.spliceDynamicData(_tableId, _keyTuple, 0, uint40(_index * 1), uint40(_encoded.length), _encoded);
     }
   }
 
@@ -433,7 +313,7 @@ library Chain {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = chainId;
 
-    bytes memory _blob = StoreSwitch.getDynamicField(_tableId, _keyTuple, 2);
+    bytes memory _blob = StoreSwitch.getDynamicField(_tableId, _keyTuple, 1);
     return (string(_blob));
   }
 
@@ -444,7 +324,7 @@ library Chain {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = chainId;
 
-    bytes memory _blob = StoreCore.getDynamicField(_tableId, _keyTuple, 2);
+    bytes memory _blob = StoreCore.getDynamicField(_tableId, _keyTuple, 1);
     return (string(_blob));
   }
 
@@ -455,7 +335,7 @@ library Chain {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = chainId;
 
-    StoreSwitch.setDynamicField(_tableId, _keyTuple, 2, bytes((chainColor)));
+    StoreSwitch.setDynamicField(_tableId, _keyTuple, 1, bytes((chainColor)));
   }
 
   /**
@@ -465,7 +345,7 @@ library Chain {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = chainId;
 
-    StoreCore.setDynamicField(_tableId, _keyTuple, 2, bytes((chainColor)));
+    StoreCore.setDynamicField(_tableId, _keyTuple, 1, bytes((chainColor)));
   }
 
   /**
@@ -475,7 +355,7 @@ library Chain {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = chainId;
 
-    uint256 _byteLength = StoreSwitch.getDynamicFieldLength(_tableId, _keyTuple, 2);
+    uint256 _byteLength = StoreSwitch.getDynamicFieldLength(_tableId, _keyTuple, 1);
     unchecked {
       return _byteLength / 1;
     }
@@ -488,7 +368,7 @@ library Chain {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = chainId;
 
-    uint256 _byteLength = StoreCore.getDynamicFieldLength(_tableId, _keyTuple, 2);
+    uint256 _byteLength = StoreCore.getDynamicFieldLength(_tableId, _keyTuple, 1);
     unchecked {
       return _byteLength / 1;
     }
@@ -503,7 +383,7 @@ library Chain {
     _keyTuple[0] = chainId;
 
     unchecked {
-      bytes memory _blob = StoreSwitch.getDynamicFieldSlice(_tableId, _keyTuple, 2, _index * 1, (_index + 1) * 1);
+      bytes memory _blob = StoreSwitch.getDynamicFieldSlice(_tableId, _keyTuple, 1, _index * 1, (_index + 1) * 1);
       return (string(_blob));
     }
   }
@@ -517,7 +397,7 @@ library Chain {
     _keyTuple[0] = chainId;
 
     unchecked {
-      bytes memory _blob = StoreCore.getDynamicFieldSlice(_tableId, _keyTuple, 2, _index * 1, (_index + 1) * 1);
+      bytes memory _blob = StoreCore.getDynamicFieldSlice(_tableId, _keyTuple, 1, _index * 1, (_index + 1) * 1);
       return (string(_blob));
     }
   }
@@ -529,7 +409,7 @@ library Chain {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = chainId;
 
-    StoreSwitch.pushToDynamicField(_tableId, _keyTuple, 2, bytes((_slice)));
+    StoreSwitch.pushToDynamicField(_tableId, _keyTuple, 1, bytes((_slice)));
   }
 
   /**
@@ -539,7 +419,7 @@ library Chain {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = chainId;
 
-    StoreCore.pushToDynamicField(_tableId, _keyTuple, 2, bytes((_slice)));
+    StoreCore.pushToDynamicField(_tableId, _keyTuple, 1, bytes((_slice)));
   }
 
   /**
@@ -549,7 +429,7 @@ library Chain {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = chainId;
 
-    StoreSwitch.popFromDynamicField(_tableId, _keyTuple, 2, 1);
+    StoreSwitch.popFromDynamicField(_tableId, _keyTuple, 1, 1);
   }
 
   /**
@@ -559,7 +439,7 @@ library Chain {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = chainId;
 
-    StoreCore.popFromDynamicField(_tableId, _keyTuple, 2, 1);
+    StoreCore.popFromDynamicField(_tableId, _keyTuple, 1, 1);
   }
 
   /**
@@ -571,7 +451,7 @@ library Chain {
 
     unchecked {
       bytes memory _encoded = bytes((_slice));
-      StoreSwitch.spliceDynamicData(_tableId, _keyTuple, 2, uint40(_index * 1), uint40(_encoded.length), _encoded);
+      StoreSwitch.spliceDynamicData(_tableId, _keyTuple, 1, uint40(_index * 1), uint40(_encoded.length), _encoded);
     }
   }
 
@@ -584,14 +464,14 @@ library Chain {
 
     unchecked {
       bytes memory _encoded = bytes((_slice));
-      StoreCore.spliceDynamicData(_tableId, _keyTuple, 2, uint40(_index * 1), uint40(_encoded.length), _encoded);
+      StoreCore.spliceDynamicData(_tableId, _keyTuple, 1, uint40(_index * 1), uint40(_encoded.length), _encoded);
     }
   }
 
   /**
    * @notice Get the full data.
    */
-  function get(bytes32 chainId) internal view returns (ChainData memory _table) {
+  function get(bytes32 chainId) internal view returns (ChainComponentData memory _table) {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = chainId;
 
@@ -606,7 +486,7 @@ library Chain {
   /**
    * @notice Get the full data.
    */
-  function _get(bytes32 chainId) internal view returns (ChainData memory _table) {
+  function _get(bytes32 chainId) internal view returns (ChainComponentData memory _table) {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = chainId;
 
@@ -621,10 +501,11 @@ library Chain {
   /**
    * @notice Set the full data using individual values.
    */
-  function set(bytes32 chainId, uint8[] memory landId, string memory chainName, string memory chainColor) internal {
-    bytes memory _staticData;
-    PackedCounter _encodedLengths = encodeLengths(landId, chainName, chainColor);
-    bytes memory _dynamicData = encodeDynamic(landId, chainName, chainColor);
+  function set(bytes32 chainId, uint8 landCount, string memory chainName, string memory chainColor) internal {
+    bytes memory _staticData = encodeStatic(landCount);
+
+    PackedCounter _encodedLengths = encodeLengths(chainName, chainColor);
+    bytes memory _dynamicData = encodeDynamic(chainName, chainColor);
 
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = chainId;
@@ -635,10 +516,11 @@ library Chain {
   /**
    * @notice Set the full data using individual values.
    */
-  function _set(bytes32 chainId, uint8[] memory landId, string memory chainName, string memory chainColor) internal {
-    bytes memory _staticData;
-    PackedCounter _encodedLengths = encodeLengths(landId, chainName, chainColor);
-    bytes memory _dynamicData = encodeDynamic(landId, chainName, chainColor);
+  function _set(bytes32 chainId, uint8 landCount, string memory chainName, string memory chainColor) internal {
+    bytes memory _staticData = encodeStatic(landCount);
+
+    PackedCounter _encodedLengths = encodeLengths(chainName, chainColor);
+    bytes memory _dynamicData = encodeDynamic(chainName, chainColor);
 
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = chainId;
@@ -649,10 +531,11 @@ library Chain {
   /**
    * @notice Set the full data using the data struct.
    */
-  function set(bytes32 chainId, ChainData memory _table) internal {
-    bytes memory _staticData;
-    PackedCounter _encodedLengths = encodeLengths(_table.landId, _table.chainName, _table.chainColor);
-    bytes memory _dynamicData = encodeDynamic(_table.landId, _table.chainName, _table.chainColor);
+  function set(bytes32 chainId, ChainComponentData memory _table) internal {
+    bytes memory _staticData = encodeStatic(_table.landCount);
+
+    PackedCounter _encodedLengths = encodeLengths(_table.chainName, _table.chainColor);
+    bytes memory _dynamicData = encodeDynamic(_table.chainName, _table.chainColor);
 
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = chainId;
@@ -663,10 +546,11 @@ library Chain {
   /**
    * @notice Set the full data using the data struct.
    */
-  function _set(bytes32 chainId, ChainData memory _table) internal {
-    bytes memory _staticData;
-    PackedCounter _encodedLengths = encodeLengths(_table.landId, _table.chainName, _table.chainColor);
-    bytes memory _dynamicData = encodeDynamic(_table.landId, _table.chainName, _table.chainColor);
+  function _set(bytes32 chainId, ChainComponentData memory _table) internal {
+    bytes memory _staticData = encodeStatic(_table.landCount);
+
+    PackedCounter _encodedLengths = encodeLengths(_table.chainName, _table.chainColor);
+    bytes memory _dynamicData = encodeDynamic(_table.chainName, _table.chainColor);
 
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = chainId;
@@ -675,44 +559,47 @@ library Chain {
   }
 
   /**
+   * @notice Decode the tightly packed blob of static data using this table's field layout.
+   */
+  function decodeStatic(bytes memory _blob) internal pure returns (uint8 landCount) {
+    landCount = (uint8(Bytes.slice1(_blob, 0)));
+  }
+
+  /**
    * @notice Decode the tightly packed blob of dynamic data using the encoded lengths.
    */
   function decodeDynamic(
     PackedCounter _encodedLengths,
     bytes memory _blob
-  ) internal pure returns (uint8[] memory landId, string memory chainName, string memory chainColor) {
+  ) internal pure returns (string memory chainName, string memory chainColor) {
     uint256 _start;
     uint256 _end;
     unchecked {
       _end = _encodedLengths.atIndex(0);
     }
-    landId = (SliceLib.getSubslice(_blob, _start, _end).decodeArray_uint8());
-
-    _start = _end;
-    unchecked {
-      _end += _encodedLengths.atIndex(1);
-    }
     chainName = (string(SliceLib.getSubslice(_blob, _start, _end).toBytes()));
 
     _start = _end;
     unchecked {
-      _end += _encodedLengths.atIndex(2);
+      _end += _encodedLengths.atIndex(1);
     }
     chainColor = (string(SliceLib.getSubslice(_blob, _start, _end).toBytes()));
   }
 
   /**
    * @notice Decode the tightly packed blobs using this table's field layout.
-   *
+   * @param _staticData Tightly packed static fields.
    * @param _encodedLengths Encoded lengths of dynamic fields.
    * @param _dynamicData Tightly packed dynamic fields.
    */
   function decode(
-    bytes memory,
+    bytes memory _staticData,
     PackedCounter _encodedLengths,
     bytes memory _dynamicData
-  ) internal pure returns (ChainData memory _table) {
-    (_table.landId, _table.chainName, _table.chainColor) = decodeDynamic(_encodedLengths, _dynamicData);
+  ) internal pure returns (ChainComponentData memory _table) {
+    (_table.landCount) = decodeStatic(_staticData);
+
+    (_table.chainName, _table.chainColor) = decodeDynamic(_encodedLengths, _dynamicData);
   }
 
   /**
@@ -736,17 +623,24 @@ library Chain {
   }
 
   /**
+   * @notice Tightly pack static (fixed length) data using this table's schema.
+   * @return The static data, encoded into a sequence of bytes.
+   */
+  function encodeStatic(uint8 landCount) internal pure returns (bytes memory) {
+    return abi.encodePacked(landCount);
+  }
+
+  /**
    * @notice Tightly pack dynamic data lengths using this table's schema.
    * @return _encodedLengths The lengths of the dynamic fields (packed into a single bytes32 value).
    */
   function encodeLengths(
-    uint8[] memory landId,
     string memory chainName,
     string memory chainColor
   ) internal pure returns (PackedCounter _encodedLengths) {
     // Lengths are effectively checked during copy by 2**40 bytes exceeding gas limits
     unchecked {
-      _encodedLengths = PackedCounterLib.pack(landId.length * 1, bytes(chainName).length, bytes(chainColor).length);
+      _encodedLengths = PackedCounterLib.pack(bytes(chainName).length, bytes(chainColor).length);
     }
   }
 
@@ -754,12 +648,8 @@ library Chain {
    * @notice Tightly pack dynamic (variable length) data using this table's schema.
    * @return The dynamic data, encoded into a sequence of bytes.
    */
-  function encodeDynamic(
-    uint8[] memory landId,
-    string memory chainName,
-    string memory chainColor
-  ) internal pure returns (bytes memory) {
-    return abi.encodePacked(EncodeArray.encode((landId)), bytes((chainName)), bytes((chainColor)));
+  function encodeDynamic(string memory chainName, string memory chainColor) internal pure returns (bytes memory) {
+    return abi.encodePacked(bytes((chainName)), bytes((chainColor)));
   }
 
   /**
@@ -769,13 +659,14 @@ library Chain {
    * @return The dyanmic (variable length) data, encoded into a sequence of bytes.
    */
   function encode(
-    uint8[] memory landId,
+    uint8 landCount,
     string memory chainName,
     string memory chainColor
   ) internal pure returns (bytes memory, PackedCounter, bytes memory) {
-    bytes memory _staticData;
-    PackedCounter _encodedLengths = encodeLengths(landId, chainName, chainColor);
-    bytes memory _dynamicData = encodeDynamic(landId, chainName, chainColor);
+    bytes memory _staticData = encodeStatic(landCount);
+
+    PackedCounter _encodedLengths = encodeLengths(chainName, chainColor);
+    bytes memory _dynamicData = encodeDynamic(chainName, chainColor);
 
     return (_staticData, _encodedLengths, _dynamicData);
   }

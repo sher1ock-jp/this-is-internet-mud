@@ -5,6 +5,8 @@ import { Script } from "forge-std/Script.sol";
 import { console } from "forge-std/console.sol";
 import { IWorld } from "../src/codegen/world/IWorld.sol";
 
+import { ChainComponent } from "../src/codegen/index.sol";
+
 contract PostDeploy is Script {
   function run(address worldAddress) external {
     // Load the private key from the `PRIVATE_KEY` environment variable (in .env)
@@ -13,12 +15,16 @@ contract PostDeploy is Script {
     // Start broadcasting transactions from the deployer account
     vm.startBroadcast(deployerPrivateKey);
 
-    // ------------------ EXAMPLES ------------------
+    IWorld world = IWorld(worldAddress);
 
-    // Call increment on the world via the registered function selector
-    uint32 newValue = IWorld(worldAddress).increment();
-    console.log("Increment via IWorld:", newValue);
+    world.createChainEntity(
+      "0x1",
+      "Ethereum",
+      "#627eea"
+    );
 
+    console.log("ChainEntitySystem created");
+    
     vm.stopBroadcast();
   }
 }
