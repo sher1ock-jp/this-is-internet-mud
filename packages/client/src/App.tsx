@@ -13,8 +13,8 @@ const initializeTileColors = () => {
 };
 
 const App = () => {
-  const [chainId, setChainId] = useState<string | null>(null);
-  const [landId, setLandId] = useState<number | null>(null);
+  const [chainId, setChainId] = useState<string>('');
+  const [landId, setLandId] = useState<number>(1);
 
   // pallette color for drawing
   const [currentColor, setCurrentColor] = useState<string>('brown');

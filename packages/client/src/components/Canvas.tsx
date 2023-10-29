@@ -22,8 +22,10 @@ const Canvas = ({ tileColors, onTileClick }: CanvasProps) => {
     const { chainId, landId } = context;
     
     const { components: { Pixel },} = useMUD();
-    // console.log("クエリ結aaa果",runQuery([HasValue(Pixel,{pixelId:1})]));
-    // HasValue(SquareCoordinates, { x: coordinateX, y: coordinateY }
+
+    // const _chaindId = parseInt(chainId, 16);
+    // console.log(_chaindId, landId);
+    console.log("query result",runQuery([HasValue(Pixel, { chainID: Number(chainId), landID: landId })]));
 
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
 

@@ -39,6 +39,7 @@ const LandSelector = () => {
 
         fetchChainData();
     }, []); // この空の依存配列により、このuseEffectはコンポーネントがマウントされたときに一度だけ実行されます
+    console.log("all_chain_component_data",all_chain_component_data)
 
     // hold the currently selected chain's ID
     const [selectedChain, setSelectedChain] = useState<string | null>(null);
@@ -51,7 +52,7 @@ const LandSelector = () => {
 
         setSelectedChain(chainData.chainName);
         setLands(Array.from({ length: chainData.landCount }).map((_, idx) => idx + 1));
-        setChainId(chainData.chainName);
+        setChainId(chainData.chainID);
     };
 
     const handleLandCreation = () => {
