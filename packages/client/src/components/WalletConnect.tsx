@@ -16,13 +16,13 @@ const WalletConnect = () => {
   const { chains, publicClient } = configureChains(
     [optimism],
     [
-      alchemyProvider({ apiKey: "process.env.ALCHEMY_PROVIDER" }),
+      alchemyProvider({ apiKey: import.meta.env.VITE_ALCHEMY_PROVIDER }),
       publicProvider()
     ]
   );
 
   const { connectors } = getDefaultWallets({
-    appName: 'verylongparty',
+    appName: 'here_is_internet',
     projectId: '4da308ff8015e2cd7401c51d2696d131',
     chains
   });

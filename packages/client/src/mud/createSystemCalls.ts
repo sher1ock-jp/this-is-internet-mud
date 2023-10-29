@@ -3,7 +3,7 @@
  * for changes in the World state (using the System contracts).
  */
 
-import { getComponentValue } from "@latticexyz/recs";
+import { getComponentValue, HasValue, runQuery, Has } from "@latticexyz/recs";
 import { ClientComponents } from "./createClientComponents";
 import { SetupNetworkResult } from "./setupNetwork";
 import { singletonEntity } from "@latticexyz/store-sync/recs";
@@ -31,21 +31,22 @@ export function createSystemCalls(
    *   (https://github.com/latticexyz/mud/blob/main/templates/react/packages/client/src/mud/setupNetwork.ts#L77-L83).
    */
   { worldContract, waitForTransaction }: SetupNetworkResult,
-  { Counter }: ClientComponents
+  { ChainComponent,OffchainLand,Pixel,AddressInfo, AddressBoard }: ClientComponents
 ) {
-  const increment = async () => {
-    /*
-     * Because IncrementSystem
-     * (https://mud.dev/templates/typescript/contracts#incrementsystemsol)
-     * is in the root namespace, `.increment` can be called directly
+  /*
+     * in the root namespace, ` func can be called directly
      * on the World contract.
-     */
-    const tx = await worldContract.write.increment();
+  */
+
+  const addLandEntity = async (chain_id: string) => {
+    
+    const tx = await worldContract.write.addLandEntity([chain_id]);
     await waitForTransaction(tx);
-    return getComponentValue(Counter, singletonEntity);
+    // console.log(getComponentValue(ChainComponent, singletonEntity));
+    // console.log(runQuery(HasValue(ChainComponent, { x: coordinateX, y: coordinateY })));
   };
 
   return {
-    increment,
+    addLandEntity,
   };
 }

@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, memo } from 'react';
-import { MAP_SIZE, TILE_SIZE } from '../constants';
+import { MAP_SIZE, TILE_SIZE, chains } from '../constants';
 
 interface CanvasProps {
-  tileColors: string[][];
-  onTileClick: (x: number, y: number) => void;
+    tileColors: string[][];
+    onTileClick: (x: number, y: number) => void;
 }
 
 const Canvas = ({ tileColors, onTileClick }: CanvasProps) => {
@@ -96,13 +96,15 @@ const Canvas = ({ tileColors, onTileClick }: CanvasProps) => {
     };
 
     return (
-        <canvas 
-          ref={canvasRef} 
-          width={MAP_SIZE * TILE_SIZE} 
-          height={MAP_SIZE * TILE_SIZE} 
-          onClick={handleCanvasClick} 
-          className="canvas"
-        />
+        <div className="pixel-area">
+            <canvas 
+            ref={canvasRef} 
+            width={MAP_SIZE * TILE_SIZE} 
+            height={MAP_SIZE * TILE_SIZE} 
+            onClick={handleCanvasClick} 
+            className="canvas"
+            />
+        </div>
     );
 }
 

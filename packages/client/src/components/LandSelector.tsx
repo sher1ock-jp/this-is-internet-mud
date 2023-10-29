@@ -7,11 +7,16 @@ const LandSelector = () => {
     // hold the list of lands associated with the selected chain
     const [lands, setLands] = useState<number[]>([]);
 
+    const defaultLandsForChains = chains.reduce((acc, chain) => {
+        acc[chain.id] = [1];
+        return acc;
+    }, {} as Record<string, number[]>);
+
     const handleChainChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         // set the selected chain's ID based on user's choice
         setSelectedChain(event.target.value);
         // a mock list of lands [1, 2, 3] is set
-        setLands([1, 2, 3]);  
+        setLands(defaultLandsForChains[event.target.value] || []);
     };
 
     const handleLandCreation = () => {

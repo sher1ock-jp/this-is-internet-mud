@@ -23,7 +23,7 @@ body {
     animation: float 3s infinite;
 }
 
-.canvas-background {
+/* .canvas-background {
     background-image: radial-gradient(circle, #34495E, #1E1E1E);
     position: absolute;
     top: 0;
@@ -31,7 +31,7 @@ body {
     width: 100%;
     height: 100%;
     z-index: -1;
-}
+} */
 
 .palette-area {
     flex: 0.1;
