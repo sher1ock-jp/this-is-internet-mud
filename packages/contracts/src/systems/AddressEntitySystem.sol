@@ -6,8 +6,8 @@ import {
     AddressInfo
 } from "../codegen/index.sol";
 
-contract AddressInfro is System {
-    function setAddressInfo(address _address, string name, string description ) {
+contract AddressEntitySystem is System {
+    function setAddressInfo(address _address, string name, string description ) public {
         AddressInfo.set(
             _address,
             name,
@@ -15,14 +15,14 @@ contract AddressInfro is System {
         );
     }
 
-    function changeAddressName(address _address, string name) {
+    function changeAddressName(address _address, string name) public {
         AddressInfo.setName(
             _address,
             name
         );
     }
 
-    function changeAddressDescription(address _address, string description) {
+    function changeAddressDescription(address _address, string description) public {
         AddressInfo.setDescription(
             _address,
             description
