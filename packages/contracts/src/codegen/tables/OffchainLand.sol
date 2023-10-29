@@ -21,15 +21,15 @@ import { ResourceId } from "@latticexyz/store/src/ResourceId.sol";
 import { RESOURCE_TABLE, RESOURCE_OFFCHAIN_TABLE } from "@latticexyz/store/src/storeResourceTypes.sol";
 
 ResourceId constant _tableId = ResourceId.wrap(
-  bytes32(abi.encodePacked(RESOURCE_TABLE, bytes14(""), bytes16("Counter")))
+  bytes32(abi.encodePacked(RESOURCE_OFFCHAIN_TABLE, bytes14(""), bytes16("OffchainLand")))
 );
-ResourceId constant CounterTableId = _tableId;
+ResourceId constant OffchainLandTableId = _tableId;
 
 FieldLayout constant _fieldLayout = FieldLayout.wrap(
-  0x0004010004000000000000000000000000000000000000000000000000000000
+  0x0001010001000000000000000000000000000000000000000000000000000000
 );
 
-library Counter {
+library OffchainLand {
   /**
    * @notice Get the table values' field layout.
    * @return _fieldLayout The field layout for the table.
@@ -43,7 +43,9 @@ library Counter {
    * @return _keySchema The key schema for the table.
    */
   function getKeySchema() internal pure returns (Schema) {
-    SchemaType[] memory _keySchema = new SchemaType[](0);
+    SchemaType[] memory _keySchema = new SchemaType[](2);
+    _keySchema[0] = SchemaType.BYTES32;
+    _keySchema[1] = SchemaType.UINT8;
 
     return SchemaLib.encode(_keySchema);
   }
@@ -54,7 +56,7 @@ library Counter {
    */
   function getValueSchema() internal pure returns (Schema) {
     SchemaType[] memory _valueSchema = new SchemaType[](1);
-    _valueSchema[0] = SchemaType.UINT32;
+    _valueSchema[0] = SchemaType.UINT8;
 
     return SchemaLib.encode(_valueSchema);
   }
@@ -64,7 +66,9 @@ library Counter {
    * @return keyNames An array of strings with the names of key fields.
    */
   function getKeyNames() internal pure returns (string[] memory keyNames) {
-    keyNames = new string[](0);
+    keyNames = new string[](2);
+    keyNames[0] = "chaindId";
+    keyNames[1] = "landId";
   }
 
   /**
@@ -73,7 +77,7 @@ library Counter {
    */
   function getFieldNames() internal pure returns (string[] memory fieldNames) {
     fieldNames = new string[](1);
-    fieldNames[0] = "value";
+    fieldNames[0] = "pixelId";
   }
 
   /**
@@ -91,86 +95,83 @@ library Counter {
   }
 
   /**
-   * @notice Get value.
+   * @notice Set pixelId.
    */
-  function getValue() internal view returns (uint32 value) {
-    bytes32[] memory _keyTuple = new bytes32[](0);
+  function setPixelId(bytes32 chaindId, uint8 landId, uint8 pixelId) internal {
+    bytes32[] memory _keyTuple = new bytes32[](2);
+    _keyTuple[0] = chaindId;
+    _keyTuple[1] = bytes32(uint256(landId));
 
-    bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 0, _fieldLayout);
-    return (uint32(bytes4(_blob)));
+    StoreSwitch.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked((pixelId)), _fieldLayout);
   }
 
   /**
-   * @notice Get value.
+   * @notice Set pixelId.
    */
-  function _getValue() internal view returns (uint32 value) {
-    bytes32[] memory _keyTuple = new bytes32[](0);
+  function _setPixelId(bytes32 chaindId, uint8 landId, uint8 pixelId) internal {
+    bytes32[] memory _keyTuple = new bytes32[](2);
+    _keyTuple[0] = chaindId;
+    _keyTuple[1] = bytes32(uint256(landId));
 
-    bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 0, _fieldLayout);
-    return (uint32(bytes4(_blob)));
+    StoreCore.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked((pixelId)), _fieldLayout);
   }
 
   /**
-   * @notice Get value.
+   * @notice Set the full data using individual values.
    */
-  function get() internal view returns (uint32 value) {
-    bytes32[] memory _keyTuple = new bytes32[](0);
+  function set(bytes32 chaindId, uint8 landId, uint8 pixelId) internal {
+    bytes memory _staticData = encodeStatic(pixelId);
 
-    bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 0, _fieldLayout);
-    return (uint32(bytes4(_blob)));
+    PackedCounter _encodedLengths;
+    bytes memory _dynamicData;
+
+    bytes32[] memory _keyTuple = new bytes32[](2);
+    _keyTuple[0] = chaindId;
+    _keyTuple[1] = bytes32(uint256(landId));
+
+    StoreSwitch.setRecord(_tableId, _keyTuple, _staticData, _encodedLengths, _dynamicData);
   }
 
   /**
-   * @notice Get value.
+   * @notice Set the full data using individual values.
    */
-  function _get() internal view returns (uint32 value) {
-    bytes32[] memory _keyTuple = new bytes32[](0);
+  function _set(bytes32 chaindId, uint8 landId, uint8 pixelId) internal {
+    bytes memory _staticData = encodeStatic(pixelId);
 
-    bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 0, _fieldLayout);
-    return (uint32(bytes4(_blob)));
+    PackedCounter _encodedLengths;
+    bytes memory _dynamicData;
+
+    bytes32[] memory _keyTuple = new bytes32[](2);
+    _keyTuple[0] = chaindId;
+    _keyTuple[1] = bytes32(uint256(landId));
+
+    StoreCore.setRecord(_tableId, _keyTuple, _staticData, _encodedLengths, _dynamicData, _fieldLayout);
   }
 
   /**
-   * @notice Set value.
+   * @notice Decode the tightly packed blob of static data using this table's field layout.
    */
-  function setValue(uint32 value) internal {
-    bytes32[] memory _keyTuple = new bytes32[](0);
-
-    StoreSwitch.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked((value)), _fieldLayout);
+  function decodeStatic(bytes memory _blob) internal pure returns (uint8 pixelId) {
+    pixelId = (uint8(Bytes.slice1(_blob, 0)));
   }
 
   /**
-   * @notice Set value.
+   * @notice Decode the tightly packed blobs using this table's field layout.
+   * @param _staticData Tightly packed static fields.
+   *
+   *
    */
-  function _setValue(uint32 value) internal {
-    bytes32[] memory _keyTuple = new bytes32[](0);
-
-    StoreCore.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked((value)), _fieldLayout);
-  }
-
-  /**
-   * @notice Set value.
-   */
-  function set(uint32 value) internal {
-    bytes32[] memory _keyTuple = new bytes32[](0);
-
-    StoreSwitch.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked((value)), _fieldLayout);
-  }
-
-  /**
-   * @notice Set value.
-   */
-  function _set(uint32 value) internal {
-    bytes32[] memory _keyTuple = new bytes32[](0);
-
-    StoreCore.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked((value)), _fieldLayout);
+  function decode(bytes memory _staticData, PackedCounter, bytes memory) internal pure returns (uint8 pixelId) {
+    (pixelId) = decodeStatic(_staticData);
   }
 
   /**
    * @notice Delete all data for given keys.
    */
-  function deleteRecord() internal {
-    bytes32[] memory _keyTuple = new bytes32[](0);
+  function deleteRecord(bytes32 chaindId, uint8 landId) internal {
+    bytes32[] memory _keyTuple = new bytes32[](2);
+    _keyTuple[0] = chaindId;
+    _keyTuple[1] = bytes32(uint256(landId));
 
     StoreSwitch.deleteRecord(_tableId, _keyTuple);
   }
@@ -178,8 +179,10 @@ library Counter {
   /**
    * @notice Delete all data for given keys.
    */
-  function _deleteRecord() internal {
-    bytes32[] memory _keyTuple = new bytes32[](0);
+  function _deleteRecord(bytes32 chaindId, uint8 landId) internal {
+    bytes32[] memory _keyTuple = new bytes32[](2);
+    _keyTuple[0] = chaindId;
+    _keyTuple[1] = bytes32(uint256(landId));
 
     StoreCore.deleteRecord(_tableId, _keyTuple, _fieldLayout);
   }
@@ -188,8 +191,8 @@ library Counter {
    * @notice Tightly pack static (fixed length) data using this table's schema.
    * @return The static data, encoded into a sequence of bytes.
    */
-  function encodeStatic(uint32 value) internal pure returns (bytes memory) {
-    return abi.encodePacked(value);
+  function encodeStatic(uint8 pixelId) internal pure returns (bytes memory) {
+    return abi.encodePacked(pixelId);
   }
 
   /**
@@ -198,8 +201,8 @@ library Counter {
    * @return The lengths of the dynamic fields (packed into a single bytes32 value).
    * @return The dyanmic (variable length) data, encoded into a sequence of bytes.
    */
-  function encode(uint32 value) internal pure returns (bytes memory, PackedCounter, bytes memory) {
-    bytes memory _staticData = encodeStatic(value);
+  function encode(uint8 pixelId) internal pure returns (bytes memory, PackedCounter, bytes memory) {
+    bytes memory _staticData = encodeStatic(pixelId);
 
     PackedCounter _encodedLengths;
     bytes memory _dynamicData;
@@ -210,8 +213,10 @@ library Counter {
   /**
    * @notice Encode keys as a bytes32 array using this table's field layout.
    */
-  function encodeKeyTuple() internal pure returns (bytes32[] memory) {
-    bytes32[] memory _keyTuple = new bytes32[](0);
+  function encodeKeyTuple(bytes32 chaindId, uint8 landId) internal pure returns (bytes32[] memory) {
+    bytes32[] memory _keyTuple = new bytes32[](2);
+    _keyTuple[0] = chaindId;
+    _keyTuple[1] = bytes32(uint256(landId));
 
     return _keyTuple;
   }

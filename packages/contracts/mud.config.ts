@@ -7,8 +7,8 @@ export default mudConfig({
         chainId: "bytes32",
       },
       valueSchema: {
-        chainGasFee: "uint16",
-        landId: "uint8",
+        // chainGasFee: "uint16",
+        landId: "uint8[]",
         chainName: "string",
         chainColor: "string",
       },
@@ -16,43 +16,34 @@ export default mudConfig({
 
     Land: {
       keySchema: {
+        chaindId: "bytes32",
         landId: "uint8",
       },
       valueSchema: {
-        pixelId: "uint8",
-        pixelCount: "uint8", // sort land order
+        pixelId: "uint8[]",
       },
     },
 
-    PixelColor: {
+    OffchainLand: {
       keySchema: {
+        chaindId: "bytes32",
         landId: "uint8",
-        pixelId: "uint8",
       },
       valueSchema: {
-        r: "uint8",
-        g: "uint8",
-        b: "uint8",
-        a: "uint8",
+        pixelId: "uint8",
       },
+      offchainOnly: true,
     },
 
-    PixelAddress: {
+    Pixel: {
       keySchema: {
+        chaindId: "bytes32",
         landId: "uint8",
         pixelId: "uint8",
       },
       valueSchema: {
+        pixelColor: "uint8",
         address: "address",
-      },
-    },
-
-    PixelAddressConnection: {
-      keySchema: {
-        landId: "uint8",
-        pixelId: "uint8",
-      },
-      valueSchema: {
         connectedLandId: "uint8",
         connectedPixelId: "uint8",
       },
@@ -63,8 +54,6 @@ export default mudConfig({
         address: "address",
       },
       valueSchema: {
-        mainCategory: "string",
-        subCategory: "string",
         name: "string",
         description: "string",
       },
