@@ -1,13 +1,7 @@
 import React, { useEffect, useRef, memo } from 'react';
 import { MAP_SIZE, TILE_SIZE } from '../constants';
-import ChainLandContext from '../ChainLandContext';
-import { useMUD } from "../MUDContext";
-import { 
-  HasValue,
-  runQuery,
-  getComponentValue,
-  Has,
-} from "@latticexyz/recs";
+// import ChainLandContext from '../ChainLandContext';
+
 
 interface CanvasProps {
     tileColors: string[][];
@@ -15,16 +9,11 @@ interface CanvasProps {
 }
 
 const Canvas = ({ tileColors, onTileClick }: CanvasProps) => {
-    const context = React.useContext(ChainLandContext);
-    if (!context) { throw new Error('LandSelector must be used within a ChainLandContext.Provider');}
-    const { chainId, landId } = context;
+    // const context = React.useContext(ChainLandContext);
+    // if (!context) { throw new Error('LandSelector must be used within a ChainLandContext.Provider');}
+    // const { chainId, landId } = context;
     
-    const { components: { Pixel },} = useMUD();
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
-
-    // const _chaindId = parseInt(chainId, 16);
-    // console.log(_chaindId, landId);
-    console.log("query result",runQuery([HasValue(Pixel, { chainID: Number(chainId), landID: landId })]));
 
     const drawTile = (ctx: CanvasRenderingContext2D, x: number, y: number, color: string) => {
         ctx.fillStyle = color;

@@ -1,11 +1,23 @@
 export const TILE_SIZE = 15;
 export const MAP_SIZE = 200;
-export const PRESETCOLORS = [
-    "#D32F2F", "#C2185B", "#7B1FA2", "#512DA8",
-    "#303F9F", "#1976D2", "#0288D1", "#0097A7",
-    "#00796B", "#388E3C", "#689F38", "#AFB42B",
-    "#FBC02D", "#FFA000", "#F57C00", "#E64A19"
-];
+export const PRESETCOLORS = {
+  0:"#D32F2F", // strong red
+  1:"#E57373", // light red
+  2:"#7B1FA2", // strong purple
+  3:"#BA68C8", // light purple
+  4:"#303F9F", // strong indigo
+  5:"#64B5F6", // light indigo
+  6:"#00796B", // strong teal
+  7:"#4DB6AC", // light teal
+  8:"#689F38", // strong green
+  9:"#AED581", // light green
+  10:"#AFB42B", // strong lime
+  11:"#FFF176", // light lime
+  12:"#FFA000", // strong amber
+  13:"#FFCC80", // light amber
+  14:"#8D6E63", // strong brown
+  15:"#D7CCC8"  // light brown
+};
 
 export const chains = [
   { name: 'Ethereum', id: 0x1,color: '#121212',decimal:1},
