@@ -41,15 +41,17 @@ export default mudConfig({
       keySchema: {
         chainId: "uint16",
         landId: "uint8",
-        pixelId: "uint8",// fetch as many squares as exist in front end and return only those that exist.
+        pixelId: "uint8",
       },
       valueSchema: {
-        pixelColor: "uint8",
-        contractAddress: "address",
-        connectedLandId: "uint8",
-        connectedPixelId: "uint8",
         chainID: "uint16",
         landID: "uint8",
+        pixelID: "uint8",// fetch as many squares as exist in front end and return only those that exist.
+        pixelColor: "uint8",
+        contractAddress: "address",
+        connectedChainId: "uint8",
+        connectedLandId: "uint8",
+        connectedPixelId: "uint8",
       },
     },
 

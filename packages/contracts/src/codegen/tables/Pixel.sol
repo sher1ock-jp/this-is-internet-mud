@@ -26,16 +26,18 @@ ResourceId constant _tableId = ResourceId.wrap(
 ResourceId constant PixelTableId = _tableId;
 
 FieldLayout constant _fieldLayout = FieldLayout.wrap(
-  0x001a060001140101020100000000000000000000000000000000000000000000
+  0x001c080002010101140101010000000000000000000000000000000000000000
 );
 
 struct PixelData {
-  uint8 pixelColor;
-  address contractAddress;
-  uint8 connectedLandId;
-  uint8 connectedPixelId;
   uint16 chainID;
   uint8 landID;
+  uint8 pixelID;
+  uint8 pixelColor;
+  address contractAddress;
+  uint8 connectedChainId;
+  uint8 connectedLandId;
+  uint8 connectedPixelId;
 }
 
 library Pixel {
@@ -65,13 +67,15 @@ library Pixel {
    * @return _valueSchema The value schema for the table.
    */
   function getValueSchema() internal pure returns (Schema) {
-    SchemaType[] memory _valueSchema = new SchemaType[](6);
-    _valueSchema[0] = SchemaType.UINT8;
-    _valueSchema[1] = SchemaType.ADDRESS;
+    SchemaType[] memory _valueSchema = new SchemaType[](8);
+    _valueSchema[0] = SchemaType.UINT16;
+    _valueSchema[1] = SchemaType.UINT8;
     _valueSchema[2] = SchemaType.UINT8;
     _valueSchema[3] = SchemaType.UINT8;
-    _valueSchema[4] = SchemaType.UINT16;
+    _valueSchema[4] = SchemaType.ADDRESS;
     _valueSchema[5] = SchemaType.UINT8;
+    _valueSchema[6] = SchemaType.UINT8;
+    _valueSchema[7] = SchemaType.UINT8;
 
     return SchemaLib.encode(_valueSchema);
   }
@@ -92,13 +96,15 @@ library Pixel {
    * @return fieldNames An array of strings with the names of value fields.
    */
   function getFieldNames() internal pure returns (string[] memory fieldNames) {
-    fieldNames = new string[](6);
-    fieldNames[0] = "pixelColor";
-    fieldNames[1] = "contractAddress";
-    fieldNames[2] = "connectedLandId";
-    fieldNames[3] = "connectedPixelId";
-    fieldNames[4] = "chainID";
-    fieldNames[5] = "landID";
+    fieldNames = new string[](8);
+    fieldNames[0] = "chainID";
+    fieldNames[1] = "landID";
+    fieldNames[2] = "pixelID";
+    fieldNames[3] = "pixelColor";
+    fieldNames[4] = "contractAddress";
+    fieldNames[5] = "connectedChainId";
+    fieldNames[6] = "connectedLandId";
+    fieldNames[7] = "connectedPixelId";
   }
 
   /**
@@ -116,6 +122,156 @@ library Pixel {
   }
 
   /**
+   * @notice Get chainID.
+   */
+  function getChainID(uint16 chainId, uint8 landId, uint8 pixelId) internal view returns (uint16 chainID) {
+    bytes32[] memory _keyTuple = new bytes32[](3);
+    _keyTuple[0] = bytes32(uint256(chainId));
+    _keyTuple[1] = bytes32(uint256(landId));
+    _keyTuple[2] = bytes32(uint256(pixelId));
+
+    bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 0, _fieldLayout);
+    return (uint16(bytes2(_blob)));
+  }
+
+  /**
+   * @notice Get chainID.
+   */
+  function _getChainID(uint16 chainId, uint8 landId, uint8 pixelId) internal view returns (uint16 chainID) {
+    bytes32[] memory _keyTuple = new bytes32[](3);
+    _keyTuple[0] = bytes32(uint256(chainId));
+    _keyTuple[1] = bytes32(uint256(landId));
+    _keyTuple[2] = bytes32(uint256(pixelId));
+
+    bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 0, _fieldLayout);
+    return (uint16(bytes2(_blob)));
+  }
+
+  /**
+   * @notice Set chainID.
+   */
+  function setChainID(uint16 chainId, uint8 landId, uint8 pixelId, uint16 chainID) internal {
+    bytes32[] memory _keyTuple = new bytes32[](3);
+    _keyTuple[0] = bytes32(uint256(chainId));
+    _keyTuple[1] = bytes32(uint256(landId));
+    _keyTuple[2] = bytes32(uint256(pixelId));
+
+    StoreSwitch.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked((chainID)), _fieldLayout);
+  }
+
+  /**
+   * @notice Set chainID.
+   */
+  function _setChainID(uint16 chainId, uint8 landId, uint8 pixelId, uint16 chainID) internal {
+    bytes32[] memory _keyTuple = new bytes32[](3);
+    _keyTuple[0] = bytes32(uint256(chainId));
+    _keyTuple[1] = bytes32(uint256(landId));
+    _keyTuple[2] = bytes32(uint256(pixelId));
+
+    StoreCore.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked((chainID)), _fieldLayout);
+  }
+
+  /**
+   * @notice Get landID.
+   */
+  function getLandID(uint16 chainId, uint8 landId, uint8 pixelId) internal view returns (uint8 landID) {
+    bytes32[] memory _keyTuple = new bytes32[](3);
+    _keyTuple[0] = bytes32(uint256(chainId));
+    _keyTuple[1] = bytes32(uint256(landId));
+    _keyTuple[2] = bytes32(uint256(pixelId));
+
+    bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 1, _fieldLayout);
+    return (uint8(bytes1(_blob)));
+  }
+
+  /**
+   * @notice Get landID.
+   */
+  function _getLandID(uint16 chainId, uint8 landId, uint8 pixelId) internal view returns (uint8 landID) {
+    bytes32[] memory _keyTuple = new bytes32[](3);
+    _keyTuple[0] = bytes32(uint256(chainId));
+    _keyTuple[1] = bytes32(uint256(landId));
+    _keyTuple[2] = bytes32(uint256(pixelId));
+
+    bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 1, _fieldLayout);
+    return (uint8(bytes1(_blob)));
+  }
+
+  /**
+   * @notice Set landID.
+   */
+  function setLandID(uint16 chainId, uint8 landId, uint8 pixelId, uint8 landID) internal {
+    bytes32[] memory _keyTuple = new bytes32[](3);
+    _keyTuple[0] = bytes32(uint256(chainId));
+    _keyTuple[1] = bytes32(uint256(landId));
+    _keyTuple[2] = bytes32(uint256(pixelId));
+
+    StoreSwitch.setStaticField(_tableId, _keyTuple, 1, abi.encodePacked((landID)), _fieldLayout);
+  }
+
+  /**
+   * @notice Set landID.
+   */
+  function _setLandID(uint16 chainId, uint8 landId, uint8 pixelId, uint8 landID) internal {
+    bytes32[] memory _keyTuple = new bytes32[](3);
+    _keyTuple[0] = bytes32(uint256(chainId));
+    _keyTuple[1] = bytes32(uint256(landId));
+    _keyTuple[2] = bytes32(uint256(pixelId));
+
+    StoreCore.setStaticField(_tableId, _keyTuple, 1, abi.encodePacked((landID)), _fieldLayout);
+  }
+
+  /**
+   * @notice Get pixelID.
+   */
+  function getPixelID(uint16 chainId, uint8 landId, uint8 pixelId) internal view returns (uint8 pixelID) {
+    bytes32[] memory _keyTuple = new bytes32[](3);
+    _keyTuple[0] = bytes32(uint256(chainId));
+    _keyTuple[1] = bytes32(uint256(landId));
+    _keyTuple[2] = bytes32(uint256(pixelId));
+
+    bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 2, _fieldLayout);
+    return (uint8(bytes1(_blob)));
+  }
+
+  /**
+   * @notice Get pixelID.
+   */
+  function _getPixelID(uint16 chainId, uint8 landId, uint8 pixelId) internal view returns (uint8 pixelID) {
+    bytes32[] memory _keyTuple = new bytes32[](3);
+    _keyTuple[0] = bytes32(uint256(chainId));
+    _keyTuple[1] = bytes32(uint256(landId));
+    _keyTuple[2] = bytes32(uint256(pixelId));
+
+    bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 2, _fieldLayout);
+    return (uint8(bytes1(_blob)));
+  }
+
+  /**
+   * @notice Set pixelID.
+   */
+  function setPixelID(uint16 chainId, uint8 landId, uint8 pixelId, uint8 pixelID) internal {
+    bytes32[] memory _keyTuple = new bytes32[](3);
+    _keyTuple[0] = bytes32(uint256(chainId));
+    _keyTuple[1] = bytes32(uint256(landId));
+    _keyTuple[2] = bytes32(uint256(pixelId));
+
+    StoreSwitch.setStaticField(_tableId, _keyTuple, 2, abi.encodePacked((pixelID)), _fieldLayout);
+  }
+
+  /**
+   * @notice Set pixelID.
+   */
+  function _setPixelID(uint16 chainId, uint8 landId, uint8 pixelId, uint8 pixelID) internal {
+    bytes32[] memory _keyTuple = new bytes32[](3);
+    _keyTuple[0] = bytes32(uint256(chainId));
+    _keyTuple[1] = bytes32(uint256(landId));
+    _keyTuple[2] = bytes32(uint256(pixelId));
+
+    StoreCore.setStaticField(_tableId, _keyTuple, 2, abi.encodePacked((pixelID)), _fieldLayout);
+  }
+
+  /**
    * @notice Get pixelColor.
    */
   function getPixelColor(uint16 chainId, uint8 landId, uint8 pixelId) internal view returns (uint8 pixelColor) {
@@ -124,7 +280,7 @@ library Pixel {
     _keyTuple[1] = bytes32(uint256(landId));
     _keyTuple[2] = bytes32(uint256(pixelId));
 
-    bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 0, _fieldLayout);
+    bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 3, _fieldLayout);
     return (uint8(bytes1(_blob)));
   }
 
@@ -137,7 +293,7 @@ library Pixel {
     _keyTuple[1] = bytes32(uint256(landId));
     _keyTuple[2] = bytes32(uint256(pixelId));
 
-    bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 0, _fieldLayout);
+    bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 3, _fieldLayout);
     return (uint8(bytes1(_blob)));
   }
 
@@ -150,7 +306,7 @@ library Pixel {
     _keyTuple[1] = bytes32(uint256(landId));
     _keyTuple[2] = bytes32(uint256(pixelId));
 
-    StoreSwitch.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked((pixelColor)), _fieldLayout);
+    StoreSwitch.setStaticField(_tableId, _keyTuple, 3, abi.encodePacked((pixelColor)), _fieldLayout);
   }
 
   /**
@@ -162,7 +318,7 @@ library Pixel {
     _keyTuple[1] = bytes32(uint256(landId));
     _keyTuple[2] = bytes32(uint256(pixelId));
 
-    StoreCore.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked((pixelColor)), _fieldLayout);
+    StoreCore.setStaticField(_tableId, _keyTuple, 3, abi.encodePacked((pixelColor)), _fieldLayout);
   }
 
   /**
@@ -178,7 +334,7 @@ library Pixel {
     _keyTuple[1] = bytes32(uint256(landId));
     _keyTuple[2] = bytes32(uint256(pixelId));
 
-    bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 1, _fieldLayout);
+    bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 4, _fieldLayout);
     return (address(bytes20(_blob)));
   }
 
@@ -195,7 +351,7 @@ library Pixel {
     _keyTuple[1] = bytes32(uint256(landId));
     _keyTuple[2] = bytes32(uint256(pixelId));
 
-    bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 1, _fieldLayout);
+    bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 4, _fieldLayout);
     return (address(bytes20(_blob)));
   }
 
@@ -208,7 +364,7 @@ library Pixel {
     _keyTuple[1] = bytes32(uint256(landId));
     _keyTuple[2] = bytes32(uint256(pixelId));
 
-    StoreSwitch.setStaticField(_tableId, _keyTuple, 1, abi.encodePacked((contractAddress)), _fieldLayout);
+    StoreSwitch.setStaticField(_tableId, _keyTuple, 4, abi.encodePacked((contractAddress)), _fieldLayout);
   }
 
   /**
@@ -220,7 +376,65 @@ library Pixel {
     _keyTuple[1] = bytes32(uint256(landId));
     _keyTuple[2] = bytes32(uint256(pixelId));
 
-    StoreCore.setStaticField(_tableId, _keyTuple, 1, abi.encodePacked((contractAddress)), _fieldLayout);
+    StoreCore.setStaticField(_tableId, _keyTuple, 4, abi.encodePacked((contractAddress)), _fieldLayout);
+  }
+
+  /**
+   * @notice Get connectedChainId.
+   */
+  function getConnectedChainId(
+    uint16 chainId,
+    uint8 landId,
+    uint8 pixelId
+  ) internal view returns (uint8 connectedChainId) {
+    bytes32[] memory _keyTuple = new bytes32[](3);
+    _keyTuple[0] = bytes32(uint256(chainId));
+    _keyTuple[1] = bytes32(uint256(landId));
+    _keyTuple[2] = bytes32(uint256(pixelId));
+
+    bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 5, _fieldLayout);
+    return (uint8(bytes1(_blob)));
+  }
+
+  /**
+   * @notice Get connectedChainId.
+   */
+  function _getConnectedChainId(
+    uint16 chainId,
+    uint8 landId,
+    uint8 pixelId
+  ) internal view returns (uint8 connectedChainId) {
+    bytes32[] memory _keyTuple = new bytes32[](3);
+    _keyTuple[0] = bytes32(uint256(chainId));
+    _keyTuple[1] = bytes32(uint256(landId));
+    _keyTuple[2] = bytes32(uint256(pixelId));
+
+    bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 5, _fieldLayout);
+    return (uint8(bytes1(_blob)));
+  }
+
+  /**
+   * @notice Set connectedChainId.
+   */
+  function setConnectedChainId(uint16 chainId, uint8 landId, uint8 pixelId, uint8 connectedChainId) internal {
+    bytes32[] memory _keyTuple = new bytes32[](3);
+    _keyTuple[0] = bytes32(uint256(chainId));
+    _keyTuple[1] = bytes32(uint256(landId));
+    _keyTuple[2] = bytes32(uint256(pixelId));
+
+    StoreSwitch.setStaticField(_tableId, _keyTuple, 5, abi.encodePacked((connectedChainId)), _fieldLayout);
+  }
+
+  /**
+   * @notice Set connectedChainId.
+   */
+  function _setConnectedChainId(uint16 chainId, uint8 landId, uint8 pixelId, uint8 connectedChainId) internal {
+    bytes32[] memory _keyTuple = new bytes32[](3);
+    _keyTuple[0] = bytes32(uint256(chainId));
+    _keyTuple[1] = bytes32(uint256(landId));
+    _keyTuple[2] = bytes32(uint256(pixelId));
+
+    StoreCore.setStaticField(_tableId, _keyTuple, 5, abi.encodePacked((connectedChainId)), _fieldLayout);
   }
 
   /**
@@ -236,7 +450,7 @@ library Pixel {
     _keyTuple[1] = bytes32(uint256(landId));
     _keyTuple[2] = bytes32(uint256(pixelId));
 
-    bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 2, _fieldLayout);
+    bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 6, _fieldLayout);
     return (uint8(bytes1(_blob)));
   }
 
@@ -253,7 +467,7 @@ library Pixel {
     _keyTuple[1] = bytes32(uint256(landId));
     _keyTuple[2] = bytes32(uint256(pixelId));
 
-    bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 2, _fieldLayout);
+    bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 6, _fieldLayout);
     return (uint8(bytes1(_blob)));
   }
 
@@ -266,7 +480,7 @@ library Pixel {
     _keyTuple[1] = bytes32(uint256(landId));
     _keyTuple[2] = bytes32(uint256(pixelId));
 
-    StoreSwitch.setStaticField(_tableId, _keyTuple, 2, abi.encodePacked((connectedLandId)), _fieldLayout);
+    StoreSwitch.setStaticField(_tableId, _keyTuple, 6, abi.encodePacked((connectedLandId)), _fieldLayout);
   }
 
   /**
@@ -278,7 +492,7 @@ library Pixel {
     _keyTuple[1] = bytes32(uint256(landId));
     _keyTuple[2] = bytes32(uint256(pixelId));
 
-    StoreCore.setStaticField(_tableId, _keyTuple, 2, abi.encodePacked((connectedLandId)), _fieldLayout);
+    StoreCore.setStaticField(_tableId, _keyTuple, 6, abi.encodePacked((connectedLandId)), _fieldLayout);
   }
 
   /**
@@ -294,7 +508,7 @@ library Pixel {
     _keyTuple[1] = bytes32(uint256(landId));
     _keyTuple[2] = bytes32(uint256(pixelId));
 
-    bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 3, _fieldLayout);
+    bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 7, _fieldLayout);
     return (uint8(bytes1(_blob)));
   }
 
@@ -311,7 +525,7 @@ library Pixel {
     _keyTuple[1] = bytes32(uint256(landId));
     _keyTuple[2] = bytes32(uint256(pixelId));
 
-    bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 3, _fieldLayout);
+    bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 7, _fieldLayout);
     return (uint8(bytes1(_blob)));
   }
 
@@ -324,7 +538,7 @@ library Pixel {
     _keyTuple[1] = bytes32(uint256(landId));
     _keyTuple[2] = bytes32(uint256(pixelId));
 
-    StoreSwitch.setStaticField(_tableId, _keyTuple, 3, abi.encodePacked((connectedPixelId)), _fieldLayout);
+    StoreSwitch.setStaticField(_tableId, _keyTuple, 7, abi.encodePacked((connectedPixelId)), _fieldLayout);
   }
 
   /**
@@ -336,107 +550,7 @@ library Pixel {
     _keyTuple[1] = bytes32(uint256(landId));
     _keyTuple[2] = bytes32(uint256(pixelId));
 
-    StoreCore.setStaticField(_tableId, _keyTuple, 3, abi.encodePacked((connectedPixelId)), _fieldLayout);
-  }
-
-  /**
-   * @notice Get chainID.
-   */
-  function getChainID(uint16 chainId, uint8 landId, uint8 pixelId) internal view returns (uint16 chainID) {
-    bytes32[] memory _keyTuple = new bytes32[](3);
-    _keyTuple[0] = bytes32(uint256(chainId));
-    _keyTuple[1] = bytes32(uint256(landId));
-    _keyTuple[2] = bytes32(uint256(pixelId));
-
-    bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 4, _fieldLayout);
-    return (uint16(bytes2(_blob)));
-  }
-
-  /**
-   * @notice Get chainID.
-   */
-  function _getChainID(uint16 chainId, uint8 landId, uint8 pixelId) internal view returns (uint16 chainID) {
-    bytes32[] memory _keyTuple = new bytes32[](3);
-    _keyTuple[0] = bytes32(uint256(chainId));
-    _keyTuple[1] = bytes32(uint256(landId));
-    _keyTuple[2] = bytes32(uint256(pixelId));
-
-    bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 4, _fieldLayout);
-    return (uint16(bytes2(_blob)));
-  }
-
-  /**
-   * @notice Set chainID.
-   */
-  function setChainID(uint16 chainId, uint8 landId, uint8 pixelId, uint16 chainID) internal {
-    bytes32[] memory _keyTuple = new bytes32[](3);
-    _keyTuple[0] = bytes32(uint256(chainId));
-    _keyTuple[1] = bytes32(uint256(landId));
-    _keyTuple[2] = bytes32(uint256(pixelId));
-
-    StoreSwitch.setStaticField(_tableId, _keyTuple, 4, abi.encodePacked((chainID)), _fieldLayout);
-  }
-
-  /**
-   * @notice Set chainID.
-   */
-  function _setChainID(uint16 chainId, uint8 landId, uint8 pixelId, uint16 chainID) internal {
-    bytes32[] memory _keyTuple = new bytes32[](3);
-    _keyTuple[0] = bytes32(uint256(chainId));
-    _keyTuple[1] = bytes32(uint256(landId));
-    _keyTuple[2] = bytes32(uint256(pixelId));
-
-    StoreCore.setStaticField(_tableId, _keyTuple, 4, abi.encodePacked((chainID)), _fieldLayout);
-  }
-
-  /**
-   * @notice Get landID.
-   */
-  function getLandID(uint16 chainId, uint8 landId, uint8 pixelId) internal view returns (uint8 landID) {
-    bytes32[] memory _keyTuple = new bytes32[](3);
-    _keyTuple[0] = bytes32(uint256(chainId));
-    _keyTuple[1] = bytes32(uint256(landId));
-    _keyTuple[2] = bytes32(uint256(pixelId));
-
-    bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 5, _fieldLayout);
-    return (uint8(bytes1(_blob)));
-  }
-
-  /**
-   * @notice Get landID.
-   */
-  function _getLandID(uint16 chainId, uint8 landId, uint8 pixelId) internal view returns (uint8 landID) {
-    bytes32[] memory _keyTuple = new bytes32[](3);
-    _keyTuple[0] = bytes32(uint256(chainId));
-    _keyTuple[1] = bytes32(uint256(landId));
-    _keyTuple[2] = bytes32(uint256(pixelId));
-
-    bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 5, _fieldLayout);
-    return (uint8(bytes1(_blob)));
-  }
-
-  /**
-   * @notice Set landID.
-   */
-  function setLandID(uint16 chainId, uint8 landId, uint8 pixelId, uint8 landID) internal {
-    bytes32[] memory _keyTuple = new bytes32[](3);
-    _keyTuple[0] = bytes32(uint256(chainId));
-    _keyTuple[1] = bytes32(uint256(landId));
-    _keyTuple[2] = bytes32(uint256(pixelId));
-
-    StoreSwitch.setStaticField(_tableId, _keyTuple, 5, abi.encodePacked((landID)), _fieldLayout);
-  }
-
-  /**
-   * @notice Set landID.
-   */
-  function _setLandID(uint16 chainId, uint8 landId, uint8 pixelId, uint8 landID) internal {
-    bytes32[] memory _keyTuple = new bytes32[](3);
-    _keyTuple[0] = bytes32(uint256(chainId));
-    _keyTuple[1] = bytes32(uint256(landId));
-    _keyTuple[2] = bytes32(uint256(pixelId));
-
-    StoreCore.setStaticField(_tableId, _keyTuple, 5, abi.encodePacked((landID)), _fieldLayout);
+    StoreCore.setStaticField(_tableId, _keyTuple, 7, abi.encodePacked((connectedPixelId)), _fieldLayout);
   }
 
   /**
@@ -480,20 +594,24 @@ library Pixel {
     uint16 chainId,
     uint8 landId,
     uint8 pixelId,
+    uint16 chainID,
+    uint8 landID,
+    uint8 pixelID,
     uint8 pixelColor,
     address contractAddress,
+    uint8 connectedChainId,
     uint8 connectedLandId,
-    uint8 connectedPixelId,
-    uint16 chainID,
-    uint8 landID
+    uint8 connectedPixelId
   ) internal {
     bytes memory _staticData = encodeStatic(
+      chainID,
+      landID,
+      pixelID,
       pixelColor,
       contractAddress,
+      connectedChainId,
       connectedLandId,
-      connectedPixelId,
-      chainID,
-      landID
+      connectedPixelId
     );
 
     PackedCounter _encodedLengths;
@@ -514,20 +632,24 @@ library Pixel {
     uint16 chainId,
     uint8 landId,
     uint8 pixelId,
+    uint16 chainID,
+    uint8 landID,
+    uint8 pixelID,
     uint8 pixelColor,
     address contractAddress,
+    uint8 connectedChainId,
     uint8 connectedLandId,
-    uint8 connectedPixelId,
-    uint16 chainID,
-    uint8 landID
+    uint8 connectedPixelId
   ) internal {
     bytes memory _staticData = encodeStatic(
+      chainID,
+      landID,
+      pixelID,
       pixelColor,
       contractAddress,
+      connectedChainId,
       connectedLandId,
-      connectedPixelId,
-      chainID,
-      landID
+      connectedPixelId
     );
 
     PackedCounter _encodedLengths;
@@ -546,12 +668,14 @@ library Pixel {
    */
   function set(uint16 chainId, uint8 landId, uint8 pixelId, PixelData memory _table) internal {
     bytes memory _staticData = encodeStatic(
+      _table.chainID,
+      _table.landID,
+      _table.pixelID,
       _table.pixelColor,
       _table.contractAddress,
+      _table.connectedChainId,
       _table.connectedLandId,
-      _table.connectedPixelId,
-      _table.chainID,
-      _table.landID
+      _table.connectedPixelId
     );
 
     PackedCounter _encodedLengths;
@@ -570,12 +694,14 @@ library Pixel {
    */
   function _set(uint16 chainId, uint8 landId, uint8 pixelId, PixelData memory _table) internal {
     bytes memory _staticData = encodeStatic(
+      _table.chainID,
+      _table.landID,
+      _table.pixelID,
       _table.pixelColor,
       _table.contractAddress,
+      _table.connectedChainId,
       _table.connectedLandId,
-      _table.connectedPixelId,
-      _table.chainID,
-      _table.landID
+      _table.connectedPixelId
     );
 
     PackedCounter _encodedLengths;
@@ -598,25 +724,31 @@ library Pixel {
     internal
     pure
     returns (
+      uint16 chainID,
+      uint8 landID,
+      uint8 pixelID,
       uint8 pixelColor,
       address contractAddress,
+      uint8 connectedChainId,
       uint8 connectedLandId,
-      uint8 connectedPixelId,
-      uint16 chainID,
-      uint8 landID
+      uint8 connectedPixelId
     )
   {
-    pixelColor = (uint8(Bytes.slice1(_blob, 0)));
+    chainID = (uint16(Bytes.slice2(_blob, 0)));
 
-    contractAddress = (address(Bytes.slice20(_blob, 1)));
+    landID = (uint8(Bytes.slice1(_blob, 2)));
 
-    connectedLandId = (uint8(Bytes.slice1(_blob, 21)));
+    pixelID = (uint8(Bytes.slice1(_blob, 3)));
 
-    connectedPixelId = (uint8(Bytes.slice1(_blob, 22)));
+    pixelColor = (uint8(Bytes.slice1(_blob, 4)));
 
-    chainID = (uint16(Bytes.slice2(_blob, 23)));
+    contractAddress = (address(Bytes.slice20(_blob, 5)));
 
-    landID = (uint8(Bytes.slice1(_blob, 25)));
+    connectedChainId = (uint8(Bytes.slice1(_blob, 25)));
+
+    connectedLandId = (uint8(Bytes.slice1(_blob, 26)));
+
+    connectedPixelId = (uint8(Bytes.slice1(_blob, 27)));
   }
 
   /**
@@ -631,12 +763,14 @@ library Pixel {
     bytes memory
   ) internal pure returns (PixelData memory _table) {
     (
+      _table.chainID,
+      _table.landID,
+      _table.pixelID,
       _table.pixelColor,
       _table.contractAddress,
+      _table.connectedChainId,
       _table.connectedLandId,
-      _table.connectedPixelId,
-      _table.chainID,
-      _table.landID
+      _table.connectedPixelId
     ) = decodeStatic(_staticData);
   }
 
@@ -669,14 +803,26 @@ library Pixel {
    * @return The static data, encoded into a sequence of bytes.
    */
   function encodeStatic(
+    uint16 chainID,
+    uint8 landID,
+    uint8 pixelID,
     uint8 pixelColor,
     address contractAddress,
+    uint8 connectedChainId,
     uint8 connectedLandId,
-    uint8 connectedPixelId,
-    uint16 chainID,
-    uint8 landID
+    uint8 connectedPixelId
   ) internal pure returns (bytes memory) {
-    return abi.encodePacked(pixelColor, contractAddress, connectedLandId, connectedPixelId, chainID, landID);
+    return
+      abi.encodePacked(
+        chainID,
+        landID,
+        pixelID,
+        pixelColor,
+        contractAddress,
+        connectedChainId,
+        connectedLandId,
+        connectedPixelId
+      );
   }
 
   /**
@@ -686,20 +832,24 @@ library Pixel {
    * @return The dyanmic (variable length) data, encoded into a sequence of bytes.
    */
   function encode(
+    uint16 chainID,
+    uint8 landID,
+    uint8 pixelID,
     uint8 pixelColor,
     address contractAddress,
+    uint8 connectedChainId,
     uint8 connectedLandId,
-    uint8 connectedPixelId,
-    uint16 chainID,
-    uint8 landID
+    uint8 connectedPixelId
   ) internal pure returns (bytes memory, PackedCounter, bytes memory) {
     bytes memory _staticData = encodeStatic(
+      chainID,
+      landID,
+      pixelID,
       pixelColor,
       contractAddress,
+      connectedChainId,
       connectedLandId,
-      connectedPixelId,
-      chainID,
-      landID
+      connectedPixelId
     );
 
     PackedCounter _encodedLengths;

@@ -1,76 +1,59 @@
-import React, { useState, useEffect } from 'react';
-import { useMUD } from "../MUDContext";
-import { 
-  HasValue,
-  runQuery,
-  getComponentValue,
-  Has,
-} from "@latticexyz/recs";
+import React from 'react';
 
-import ChainLandContext from '../ChainLandContext';
+interface LandSelectorProps {
+    allChainEntities: any[];
+    selectedChainName: string | null;
+    setSelectedChainName: React.Dispatch<React.SetStateAction<string | null>>;
+    setSelectedChainId: React.Dispatch<React.SetStateAction<string>>;
+    setSelectedLandId: React.Dispatch<React.SetStateAction<number>>;
+    lands: number[];
+    setLands: React.Dispatch<React.SetStateAction<number[]>>;
+}
 
-const LandSelector = () => {
-    const context = React.useContext(ChainLandContext);
+const LandSelector = ({
+    allChainEntities,
+    selectedChainName, setSelectedChainName,
+    lands, setLands,
+    setSelectedChainId,
+    setSelectedLandId
+}:LandSelectorProps) => {
+    
+    const processChainSelection = (event: React.ChangeEvent<HTMLSelectElement>) => { // when a chain is selected,  update the lands array
+        const selected_chain_name = event.target.value;
+        const chain_entity = allChainEntities.find(chain => chain.chainName === selected_chain_name);
 
-    if (!context) {
-        throw new Error('LandSelector must be used within a ChainLandContext.Provider');
-    }
-
-    const { components: { ChainComponent },} = useMUD();
-
-    const { setChainId, setLandId } = context;
-
-    const [allChainData, setAllChainData] = useState<any[]>([]);
-    const [selectedChain, setSelectedChain] = useState<string | null>(null); // hold the currently selected chain's ID
-    const [lands, setLands] = useState<number[]>([]); // hold the list of lands associated with the selected chain
-
-    useEffect(() => {
-        const fetchChainData = async () => {
-            const entities = await runQuery([Has(ChainComponent)]);
-            const fetchedData = Array.from(entities)
-                .map(entity => getComponentValue(ChainComponent, entity))
-                .filter(Boolean);
-
-            setAllChainData(fetchedData);
-        };
-
-        fetchChainData();
-    }, []);
-
-    const handleChainChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        const selectedChainName = event.target.value;
-        const chainData = allChainData.find(chain => chain.chainName === selectedChainName);
-
-        if (chainData) {
-            setSelectedChain(chainData.chainName);
-            setLands(Array.from({ length: chainData.landCount }).map((_, idx) => idx + 1));
-            setChainId(chainData.chainID);
+        if (chain_entity) {
+            setSelectedChainName(chain_entity.chainName);
+            setLands(Array.from({ length: chain_entity.landCount }).map((_, idx) => idx + 1));
+            setSelectedChainId(chain_entity.chainID);
         }
     };
 
-    const handleLandCreation = () => {
-        const newLandId = lands.length + 1;
-        setLands(prevLands => [...prevLands, newLandId]);
-        setLandId(newLandId);
+    const createNewLand = () => {
+        const new_land_id = lands.length + 1;
+        setLands(prevLands => [...prevLands, new_land_id]);
+        setSelectedLandId(new_land_id);
     };
 
     return (
         <div className="land-selector">
-            <select onChange={handleChainChange}>
+            <select value={selectedChainName || ""} onChange={processChainSelection}>
                 <option value="">-- choose chain --</option>
-                {allChainData.map(chain => (
+                {allChainEntities.map(chain => (
                     <option key={chain.chainName} value={chain.chainName}>{chain.chainName}</option>
                 ))}
             </select>
             
-            {selectedChain && (
+            {selectedChainName && (
                 <>
                     <ul>
                         {lands.map(landId => (
-                            <li key={landId}>LAND {landId}</li>
+                            <li key={landId} onClick={() => setSelectedLandId(landId)}>
+                                LAND {landId}
+                            </li>
                         ))}
                     </ul>
-                    <button onClick={handleLandCreation}>Create LAND</button>
+                    <button onClick={createNewLand}>CREATE LAND</button>
                 </>
             )}
         </div>

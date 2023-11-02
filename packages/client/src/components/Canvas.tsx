@@ -1,63 +1,135 @@
-import React, { useEffect, useRef, memo } from 'react';
-import { MAP_SIZE, TILE_SIZE } from '../constants';
-// import ChainLandContext from '../ChainLandContext';
-
+import React, { useEffect, useState, useRef, memo } from 'react';
+import { MAP_SIZE, TILE_SIZE, CHAINS } from '../constants';
+import { useMUD } from "../MUDContext";
+import { 
+  HasValue,
+  runQuery,
+  getComponentValue,
+} from "@latticexyz/recs";
 
 interface CanvasProps {
-    tileColors: string[][];
-    onTileClick: (id: number) => void;  // callback when a specific tile is clicked
+    pixelColors: string[][];
+    handlePixelUpdate: (id: number) => void; 
+    setSelectedChainName: React.Dispatch<React.SetStateAction<string | null>>;
+    selectedChainName: string | null;
+    setSelectedChainId: React.Dispatch<React.SetStateAction<string>>;
+    selectedChainId: string;
+    setSelectedLandId: React.Dispatch<React.SetStateAction<number>>;
+    selectedLandId: number;
+    canvasMode: "INPUT" | "VIEW";
 }
 
-const Canvas = ({ tileColors, onTileClick }: CanvasProps) => {
-    // const context = React.useContext(ChainLandContext);
-    // if (!context) { throw new Error('LandSelector must be used within a ChainLandContext.Provider');}
-    // const { chainId, landId } = context;
+const Canvas = ({ 
+    pixelColors, handlePixelUpdate, 
+    setSelectedChainName,
+    selectedChainId, setSelectedChainId,
+    selectedLandId, setSelectedLandId,
+    canvasMode,
+}: CanvasProps) => {
+
+    const { components: { Pixel },} = useMUD();    
     
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
-
-    const drawTile = (ctx: CanvasRenderingContext2D, x: number, y: number, color: string) => {
-        ctx.fillStyle = color;
-        ctx.fillRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
-        ctx.strokeStyle = 'lightgray';  // Outline color
-        ctx.strokeRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
-    };
+    const pixelInfoRef = useRef<HTMLDivElement | null>(null);
+    const [hoveredPixel, setHoveredPixel] = useState<{ data: {connectedChainId: string, connectedLandId: number, connectedPixelId: number}} | null>(null);
+    const [connectedChainId, setConnectedChainId] = useState<string>('');
+    const [connectedLandId, setConnectedLandId] = useState<number>(0);
+    const [connectedPixelId, setConnectedPixelId] = useState<number>(0);
 
     useEffect(() => {
         const ctx = canvasRef.current?.getContext('2d');
         if (ctx) {
             for (let x = 0; x < MAP_SIZE; x++) {
                 for (let y = 0; y < MAP_SIZE; y++) {
-                    drawTile(ctx, x, y, tileColors[y][x]);
+                    paintPixel(ctx, x, y, pixelColors[y][x]);
                 }
             }   
         }
-    }, [tileColors]); 
+    }, [pixelColors]);
 
-    const xyToId = (x: number, y: number) => y * MAP_SIZE + x;
+    useEffect(() => {
+        document.addEventListener("mousedown", handlePixelInfo);
+        return () => {
+            document.removeEventListener("mousedown", handlePixelInfo);
+        };
+    }, []);
 
-    const handleCanvasClick = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    const paintPixel = (ctx: CanvasRenderingContext2D, pixelX: number, pixelY: number, color: string) => {
+        ctx.fillStyle = color;
+        ctx.fillRect(pixelX * TILE_SIZE, pixelY * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+        ctx.strokeRect(pixelX * TILE_SIZE, pixelY * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+    };
+
+    const convertXYToPixelId = (x: number, y: number) => y * MAP_SIZE + x;
+
+    const onCanvasClicked = (e: React.MouseEvent<HTMLCanvasElement>) => {
         const rect = canvasRef.current?.getBoundingClientRect();
         if (rect) {
             const x = Math.floor((e.clientX - rect.left) / TILE_SIZE);
             const y = Math.floor((e.clientY - rect.top) / TILE_SIZE);
 
             if (x >= 0 && x < MAP_SIZE && y >= 0 && y < MAP_SIZE) {
-                onTileClick(xyToId(x, y));
+                if(canvasMode === "INPUT") {
+                    handlePixelUpdate(convertXYToPixelId(x, y));
+                } else { 
+                    const pixelId = convertXYToPixelId(x, y);
+                    const pixelEntity = runQuery([HasValue(Pixel, { chainID: Number(selectedChainId), landID: selectedLandId, pixelID: pixelId })]);
+                    
+                    const pixelData = [...pixelEntity].map(entity => getComponentValue(Pixel, entity)).filter(Boolean) as any[];
+                    if (pixelData.length) {
+                        const data = pixelData[0];
+                        setConnectedChainId(data.connectedChainId);
+                        setConnectedLandId(data.connectedLandId);
+                        setConnectedPixelId(data.connectedPixelId);
+                        setHoveredPixel({
+                            data: {
+                                connectedChainId: connectedChainId,
+                                connectedLandId: connectedLandId,
+                                connectedPixelId: connectedPixelId,
+                            },
+                        });
+                    }
+                }
             }
         }
     };
 
+    const handlePixelInfo = (e: MouseEvent) => {
+        if (pixelInfoRef.current && !pixelInfoRef.current.contains(e.target as Node)) {
+            setHoveredPixel(null);
+        }
+    };
+
+    const moveToSelectedPixel = () => {
+        if (!hoveredPixel) {
+            console.log("No pixel selected");
+            return;
+        }
+        const chain_name = CHAINS.find(chain => Number(hoveredPixel.data.connectedChainId) === chain.id_for_contract);
+        setSelectedChainName(chain_name?.name || null);
+        setSelectedChainId(hoveredPixel.data.connectedChainId);
+        setSelectedLandId(hoveredPixel.data.connectedLandId);
+        setHoveredPixel(null);
+    }
+
     return (
-        <div className="pixel-area">
+        <>
             <canvas 
-            ref={canvasRef} 
-            width={MAP_SIZE * TILE_SIZE} 
-            height={MAP_SIZE * TILE_SIZE} 
-            onClick={handleCanvasClick} 
-            className="canvas"
+                ref={canvasRef} 
+                width={MAP_SIZE * TILE_SIZE} 
+                height={MAP_SIZE * TILE_SIZE} 
+                onClick={onCanvasClicked} 
+                className="canvas"
             />
-        </div>
+             {hoveredPixel && 
+                <div className="pixel-info" ref={pixelInfoRef}>
+                    <p>move to connected address?</p>
+                    <p>ChainId: {hoveredPixel.data.connectedChainId}</p>
+                    <button onClick={moveToSelectedPixel}>Move</button>
+                </div>
+            }
+        </>
     );
 }
 
-export default memo(Canvas); // using memo to prevent unnecessary re-renders
+export default memo(Canvas);

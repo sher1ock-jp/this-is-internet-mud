@@ -14,6 +14,7 @@ interface IPixelEntitySystem {
     uint8[] memory pixel_id,
     uint8[] memory pixel_color,
     address[] memory contract_address,
+    uint8[] memory connected_chain_id,
     uint8[] memory connected_land_id,
     uint8[] memory connected_pixel_id
   ) external;

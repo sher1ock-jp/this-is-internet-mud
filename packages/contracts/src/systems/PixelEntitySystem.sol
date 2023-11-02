@@ -15,6 +15,7 @@ contract PixelEntitySystem is System {
         uint8[] memory pixel_id,
         uint8[] memory pixel_color,
         address[] memory contract_address,
+        uint8[] memory connected_chain_id,
         uint8[] memory connected_land_id,
         uint8[] memory connected_pixel_id
     ) public {
@@ -23,12 +24,14 @@ contract PixelEntitySystem is System {
                 chain_id,
                 land_id,
                 pixel_id[i],
+                chain_id,
+                land_id,
+                pixel_id[i],
                 pixel_color[i],
                 contract_address[i],
+                connected_chain_id[i],
                 connected_land_id[i],
-                connected_pixel_id[i],
-                chain_id,
-                land_id
+                connected_pixel_id[i]
             );
         }
     }

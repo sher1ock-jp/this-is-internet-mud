@@ -89,6 +89,11 @@ contract PostDeploy is Script {
     contract_addresses[1] = 0x051F533167D366AeE5AEbF95B85d8cd5a5A4Ef4A;
     contract_addresses[2] = 0x051F533167D366AeE5AEbF95B85d8cd5a5A4Ef4A;
 
+    uint8[] memory connected_chain_ids = new uint8[](3);
+    connected_chain_ids[0] = 10;
+    connected_chain_ids[1] = 10;
+    connected_chain_ids[2] = 10;
+
     uint8[] memory connected_land_ids = new uint8[](3);
     connected_land_ids[0] = 1;
     connected_land_ids[1] = 2;
@@ -105,8 +110,52 @@ contract PostDeploy is Script {
       pixel_ids,
       pixel_colors,
       contract_addresses,
+      connected_chain_ids,
       connected_land_ids,
       connected_pixel_ids
+    );
+
+    uint16 _chainId = 10;
+
+    uint8[] memory _pixel_ids = new uint8[](3);
+    _pixel_ids[0] = 1;
+    _pixel_ids[1] = 2;
+    _pixel_ids[2] = 3;
+
+    uint8[] memory _pixel_colors = new uint8[](3);
+    _pixel_colors[0] = 0x0;
+    _pixel_colors[1] = 0xA;
+    _pixel_colors[2] = 0xB;
+    
+    address[] memory _contract_addresses = new address[](3);
+    _contract_addresses[0] = 0x051F533167D366AeE5AEbF95B85d8cd5a5A4Ef4A;
+    _contract_addresses[1] = 0x051F533167D366AeE5AEbF95B85d8cd5a5A4Ef4A;
+    _contract_addresses[2] = 0x051F533167D366AeE5AEbF95B85d8cd5a5A4Ef4A;
+
+    uint8[] memory _connected_chain_ids = new uint8[](3);
+    _connected_chain_ids[0] = 1;
+    _connected_chain_ids[1] = 1;
+    _connected_chain_ids[2] = 1;
+
+    uint8[] memory _connected_land_ids = new uint8[](3);
+    connected_land_ids[0] = 1;
+    connected_land_ids[1] = 2;
+    connected_land_ids[2] = 3;
+
+    uint8[] memory _connected_pixel_ids = new uint8[](3);
+    connected_pixel_ids[0] = 1;
+    connected_pixel_ids[1] = 2;
+    connected_pixel_ids[2] = 3;
+
+    world.createPixelEntity(
+      _chainId,
+      1,
+      _pixel_ids,
+      _pixel_colors,
+      _contract_addresses,
+      _connected_chain_ids,
+      _connected_land_ids,
+      _connected_pixel_ids
     );
 
     console.log("ChainEntitySystem created");

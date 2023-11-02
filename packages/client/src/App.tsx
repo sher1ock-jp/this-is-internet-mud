@@ -1,11 +1,11 @@
 import { useState,useEffect } from 'react';
-import { MAP_SIZE, TILE_SIZE, PRESETCOLORS } from './constants';
+import { CHAINS, PRESETCOLORS } from './constants';
 import './App.css';
 import Canvas from './components/Canvas'; 
 import WalletConnect from './components/WalletConnect';
 import LandSelector from './components/LandSelector';
-import PixelInfoForm, {PixelInfo} from './components/PixelInfoForm';
-import ChainLandContext from './ChainLandContext';
+import Palette from './components/Palette';
+import PixelForm, {PixelInfo} from './components/PixelForm';
 import { useMUD } from "./MUDContext";
 import { 
   HasValue,
@@ -13,89 +13,105 @@ import {
   getComponentValue,
   Has,
 } from "@latticexyz/recs";
-
-// Utility function to initialize a 2D array (representing the map/grid)
-const initializeTileColors = () => {
-  return Array.from({ length: MAP_SIZE }, () => Array(MAP_SIZE).fill('white'));
-};
+import { initializePixelColors, idToXy } from './utils';
 
 const App = () => {
-  const [chainId, setChainId] = useState<string>('');
-  const [landId, setLandId] = useState<number>(1);
-  const [currentColor, setCurrentColor] = useState<string>('brown'); // pallette color for drawing
-  const [tileColors, setTileColors] = useState<string[][]>(initializeTileColors()); // tile(drawed) color
+  const { components: { Pixel,ChainComponent },} = useMUD();
+  /* AppData */
+  const [chainBgColor, setChainBgColor] = useState<string>('#fff');
+  /* ColorPaletteData */
+  const [currentColor, setCurrentColor] = useState<string>('brown'); 
+  /* CanvasData */
+  const [pixelColors, setPixelColors] = useState<string[][]>(initializePixelColors()); 
+  const [canvasMode, setCanvasMode] = useState<"INPUT" | "VIEW">("INPUT");
+  /* LandData */
+  const [allChainEntities, setAllChainEntity] = useState<any[]>([]);
+  const [selectedChainName, setSelectedChainName] = useState<string | null>(null);
+  const [selectedChainId, setSelectedChainId] = useState<string>('');
+  const [selectedLandId, setSelectedLandId] = useState<number>(1);
+  const [lands, setLands] = useState<number[]>([]);
+  /* PixelInfoData */
   const [pixelInfo, setPixelInfo] = useState<PixelInfo | null>(null);
 
-  const { components: { Pixel },} = useMUD();
-
-  // const entities = runQuery([HasValue(Pixel, { chainID: Number(chainId), landID: landId })]);
-  // const fetchedData = Array.from(entities)
-  //     .map(entity => getComponentValue(Pixel, entity))
-  //     .filter(Boolean);
-
-  const initializePixelFromBlockchain = (fetchedPixels: any[]) => {
-    const newTileColors = initializeTileColors();
-    fetchedPixels.forEach(data => {
-      const { x, y } = idToXy(data.connectedPixelId);
-      newTileColors[y][x] = PRESETCOLORS[data.pixelColor as keyof typeof PRESETCOLORS];
-    });
-    setTileColors(newTileColors);
-  };
+  useEffect(() => {
+    const chain_entities = runQuery([Has(ChainComponent)]);
+    const all_chain_component = Array.from(chain_entities).map(entity => getComponentValue(ChainComponent, entity)).filter(Boolean);
+    setAllChainEntity(all_chain_component);
+  }, []);
 
   useEffect(() => {
-    const entities = runQuery([HasValue(Pixel, { chainID: Number(chainId), landID: landId })]);
-    const fetchedData = Array.from(entities)
-        .map(entity => getComponentValue(Pixel, entity))
-        .filter(Boolean) as any[];
-    
-        initializePixelFromBlockchain(fetchedData);
-  }, [chainId, landId]);
+    const pixel_entities = runQuery([HasValue(Pixel, { chainID: Number(selectedChainId), landID: selectedLandId })]);
+    const existing_pixels = Array.from(pixel_entities).map(entity => getComponentValue(Pixel, entity)).filter(Boolean);
+    initializePixelFromBlockchain(existing_pixels);
+  }, [selectedChainId, selectedLandId]);
 
+  useEffect(() => {
+    const chain_entitities = runQuery([HasValue(ChainComponent, { chainID: Number(selectedChainId)})]);
+    const chain_entitity = Array.from(chain_entitities).map(entity => getComponentValue(ChainComponent, entity)).filter(Boolean);
+    if (chain_entitity.length > 0 && chain_entitity[0]) {
+      const color = chain_entitity[0].chainColor;
+      setChainBgColor(color || '#fff');
+    }
+  }, [selectedChainId]);
 
-  const idToXy = (id: number) => {
-    const x = id % MAP_SIZE;
-    const y = Math.floor(id / MAP_SIZE);
-    return { x, y };
-  }
+  const initializePixelFromBlockchain = (fetchedPixels: any[]) => { 
+    const new_pixel_colors = initializePixelColors();
+    fetchedPixels.forEach(data => {
+      const { x, y } = idToXy(data.pixelID);
+      new_pixel_colors[y][x] = PRESETCOLORS[data.pixelColor as keyof typeof PRESETCOLORS];
+    });
+    setPixelColors(new_pixel_colors);
+  };
 
-  // It updates the color of the clicked tile to the current selected color
-  const handleTileClick = (id: number) => {
-    const { x, y } = idToXy(id);  // Convert the ID back to x, y coordinates
-    const newTileColors = tileColors.map(row => [...row]);
-    newTileColors[y][x] = currentColor;
-    setTileColors(newTileColors);
+  const handlePixelUpdate = (id: number) => {
+    const { x, y } = idToXy(id);
+    const new_pixel_colors = [...pixelColors];
+    new_pixel_colors[y][x] = currentColor;
+    setPixelColors(new_pixel_colors);
   };
 
   const handlePixelInfoSubmit = (data: PixelInfo) => {
-    setPixelInfo(data); // write logic to register pixel info to server or blockchain here
+    setPixelInfo(data);
   };
-
-  const renderColorPalette = () => {
-    return Object.entries(PRESETCOLORS).map(([key, color]) => (
-        <div 
-            key={key} 
-            className={`color-swatch ${currentColor === color ? 'selected' : ''}`}
-            style={{ backgroundColor: color }}
-            onClick={() => setCurrentColor(color)}
-        />
-    ));
-}
 
   return (
     <>
-       <ChainLandContext.Provider value={{ chainId, landId, setChainId, setLandId }}>
-        <div className="app-container">
-            <Canvas tileColors={tileColors} onTileClick={handleTileClick} />
-          <div className="palette-area">
-            {renderColorPalette()}
-          </div>
-          <div className="utility-area">
-            <WalletConnect />
-            <LandSelector />
-            <PixelInfoForm onSubmit={handlePixelInfoSubmit} />
-          </div>
+      <div className="app-container">
+        <div className="pixel-area" style={{ backgroundColor: chainBgColor }}>
+          <Canvas 
+            pixelColors={pixelColors} 
+            handlePixelUpdate={handlePixelUpdate}
+            selectedChainName={selectedChainName}
+            setSelectedChainName={setSelectedChainName}
+            selectedChainId={selectedChainId}
+            setSelectedChainId={setSelectedChainId}
+            selectedLandId={selectedLandId}
+            setSelectedLandId={setSelectedLandId}
+            canvasMode={canvasMode}
+          />
         </div>
-      </ChainLandContext.Provider>
+        <div className="palette-area">
+          <Palette
+            currentColor={currentColor} 
+            setCurrentColor={setCurrentColor} 
+            canvasMode={canvasMode}
+            setCanvasMode={setCanvasMode}
+          />
+        </div>
+        <div className="utility-area">
+          <WalletConnect />
+          <LandSelector
+            allChainEntities={allChainEntities} 
+            selectedChainName={selectedChainName}
+            setSelectedChainName={setSelectedChainName}
+            setSelectedChainId={setSelectedChainId}
+            setSelectedLandId={setSelectedLandId}
+            lands={lands}
+            setLands={setLands}
+          />
+          <PixelForm onSubmit={handlePixelInfoSubmit} />
+        </div>
+      </div>
     </>
   );
 }
