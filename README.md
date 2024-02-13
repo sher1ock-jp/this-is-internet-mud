@@ -1,1 +1,1 @@
-![Uploading image.png…]()
+![image](https://github.com/sher1ock-jp/this-is-internet-mud/assets/85065480/3b25cb1b-b5f8-49c3-ade1-cdf5e683051c)![image](https://github.com/sher1ock-jp/this-is-internet-mud/assets/85065480/03e0ecc2-1803-4f2a-a1c8-2b9a790f9341)
